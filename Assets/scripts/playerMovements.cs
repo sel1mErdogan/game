@@ -61,6 +61,7 @@ public class playerMovements : MonoBehaviour
     }
     private void RotationProcess()
     {
+        if (!ismovementPressed) return;
         Quaternion targerRotation = Quaternion.LookRotation(currentMovement, Vector3.up);
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targerRotation, turnSpeed * Time.deltaTime);
      }
