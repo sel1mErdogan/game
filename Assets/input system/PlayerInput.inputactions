@@ -156,6 +156,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "CameraController",
+            "id": "31a7942c-9467-419a-927e-2a68443a346d",
+            "actions": [
+                {
+                    "name": "Zoom",
+                    "type": "PassThrough",
+                    "id": "4bb9f976-a012-4027-b983-eb992dfc1f6e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "803d04c7-0f3a-4755-9b36-8559a4148dd0",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "Normalize(min=-1,max=1)",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

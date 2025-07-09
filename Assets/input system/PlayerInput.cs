@@ -178,6 +178,34 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""CameraController"",
+            ""id"": ""31a7942c-9467-419a-927e-2a68443a346d"",
+            ""actions"": [
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""4bb9f976-a012-4027-b983-eb992dfc1f6e"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""803d04c7-0f3a-4755-9b36-8559a4148dd0"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": ""Normalize(min=-1,max=1)"",
+                    ""groups"": """",
+                    ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -187,11 +215,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_PlayerController_Movement = m_PlayerController.FindAction("Movement", throwIfNotFound: true);
         m_PlayerController_RUN = m_PlayerController.FindAction("RUN", throwIfNotFound: true);
         m_PlayerController_Newaction = m_PlayerController.FindAction("New action", throwIfNotFound: true);
+        // CameraController
+        m_CameraController = asset.FindActionMap("CameraController", throwIfNotFound: true);
+        m_CameraController_Zoom = m_CameraController.FindAction("Zoom", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
     {
         UnityEngine.Debug.Assert(!m_PlayerController.enabled, "This will cause a leak and performance issues, PlayerInput.PlayerController.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_CameraController.enabled, "This will cause a leak and performance issues, PlayerInput.CameraController.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -311,10 +343,60 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         }
     }
     public PlayerControllerActions @PlayerController => new PlayerControllerActions(this);
+
+    // CameraController
+    private readonly InputActionMap m_CameraController;
+    private List<ICameraControllerActions> m_CameraControllerActionsCallbackInterfaces = new List<ICameraControllerActions>();
+    private readonly InputAction m_CameraController_Zoom;
+    public struct CameraControllerActions
+    {
+        private @PlayerInput m_Wrapper;
+        public CameraControllerActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Zoom => m_Wrapper.m_CameraController_Zoom;
+        public InputActionMap Get() { return m_Wrapper.m_CameraController; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CameraControllerActions set) { return set.Get(); }
+        public void AddCallbacks(ICameraControllerActions instance)
+        {
+            if (instance == null || m_Wrapper.m_CameraControllerActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_CameraControllerActionsCallbackInterfaces.Add(instance);
+            @Zoom.started += instance.OnZoom;
+            @Zoom.performed += instance.OnZoom;
+            @Zoom.canceled += instance.OnZoom;
+        }
+
+        private void UnregisterCallbacks(ICameraControllerActions instance)
+        {
+            @Zoom.started -= instance.OnZoom;
+            @Zoom.performed -= instance.OnZoom;
+            @Zoom.canceled -= instance.OnZoom;
+        }
+
+        public void RemoveCallbacks(ICameraControllerActions instance)
+        {
+            if (m_Wrapper.m_CameraControllerActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(ICameraControllerActions instance)
+        {
+            foreach (var item in m_Wrapper.m_CameraControllerActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_CameraControllerActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public CameraControllerActions @CameraController => new CameraControllerActions(this);
     public interface IPlayerControllerActions
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnRUN(InputAction.CallbackContext context);
         void OnNewaction(InputAction.CallbackContext context);
+    }
+    public interface ICameraControllerActions
+    {
+        void OnZoom(InputAction.CallbackContext context);
     }
 }
