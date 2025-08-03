@@ -61,18 +61,6 @@ public class playerMovements : MonoBehaviour
     private void Update()
     {
         RotationProcess();
-
-        // --- DÜZELTİLMİŞ TEST KODU ---
-        // Eski kod: if (Input.GetKeyDown(KeyCode.G))
-        // Yeni, doğru kod aşağıdadır.
-        if (Keyboard.current != null && Keyboard.current.gKey.wasPressedThisFrame)
-        {
-            if (testItems != null && testItems.Count > 0)
-            {
-                ItemData randomItem = testItems[Random.Range(0, testItems.Count)];
-                InventoryManager.Instance.AddItem(randomItem, 1);
-            }
-        }
     }
      private void OnZoom(InputAction.CallbackContext context)
     {

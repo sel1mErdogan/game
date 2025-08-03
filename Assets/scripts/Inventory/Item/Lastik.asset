@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Lastik
   itemIcon: {fileID: 0}
+  resourceType: 6
+  description: 

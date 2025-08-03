@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "K\xFCrdan"
   itemIcon: {fileID: 0}
+  resourceType: 3
+  description: 

@@ -1,3 +1,4 @@
+// ItemData.cs
 using UnityEngine;
 
 namespace InventorySystem
@@ -7,7 +8,8 @@ namespace InventorySystem
     {
         public string itemName;
         public Sprite itemIcon;
-        // İsterseniz buraya eşya açıklaması gibi ek bilgiler ekleyebilirsiniz.
-        // public string description;
+        public ResourceType resourceType; // Kaynak türünü ekledik
+        [TextArea(3, 5)]
+        public string description; // Açıklama ekledik
     }
 }

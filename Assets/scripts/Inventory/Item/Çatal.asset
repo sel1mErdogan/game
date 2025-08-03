@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "\xC7atal"
   itemIcon: {fileID: 0}
+  resourceType: 5
+  description: 

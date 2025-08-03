@@ -14,3 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "\u015Ei\u015Fe Kapa\u011Fi"
   itemIcon: {fileID: 0}
+  resourceType: 4
+  description: 
