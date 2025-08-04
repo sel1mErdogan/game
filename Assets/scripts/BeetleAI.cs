@@ -1,35 +1,57 @@
+// BeetleAI.cs
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using InventorySystem;
-using KingdomBug;
+using InventorySystem; // Bu using'ler projenizde varsa kalsın
+using KingdomBug;     // Bu using'ler projenizde varsa kalsın
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Beetle))]
 public class BeetleAI : MonoBehaviour
 {
+    [Header("Genel Ayarlar")]
     [SerializeField] private float decisionInterval = 3f;
+    
+    [Header("Kaynak Toplama Ayarları")]
     [SerializeField] private float searchRadius = 10f;
     [SerializeField] private LayerMask resourceLayer;
+
+    // YENİ EKLENDİ: Savaşçı Ayarları
+    [Header("Savaşçı Ayarları")]
+    [SerializeField] private float enemySearchRadius = 20f;
+    [SerializeField] private float attackRange = 2.5f;
+    [SerializeField] private int attackDamage = 10;
+    [SerializeField] private float attackCooldown = 1.5f; // Saniyede bir saldırı
+    [SerializeField] private LayerMask enemyLayer; // Düşmanların hangi katmanda olduğunu seçeceğiz
     
     private NavMeshAgent agent;
     private Beetle beetle;
     private BeetleType beetleType;
     private float lastDecisionTime;
     
+    // YENİ EKLENDİ: Enum'a yeni durumlar ekledik
     private enum BeetleState
     {
         Idle,
         SearchingResource,
         CollectingResource,
-        ReturningToBase
+        ReturningToBase,
+        // Savaşçı için yeni durumlar
+        SearchingForEnemy,
+        MovingToEnemy,
+        AttackingEnemy
     }
     
     private BeetleState currentState = BeetleState.Idle;
     private Transform targetResource;
     private Transform colonyBase;
-    
+
+    // YENİ EKLENDİ: Savaşçı için yeni değişkenler
+    private Transform targetEnemy;
+    private float lastAttackTime;
+
     private void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -37,7 +59,6 @@ public class BeetleAI : MonoBehaviour
         beetleType = beetle.GetBeetleType();
         lastDecisionTime = Time.time;
         
-        // Koloni üssünü bul
         GameObject baseObj = GameObject.FindGameObjectWithTag("ColonyBase");
         if (baseObj != null)
         {
@@ -48,22 +69,17 @@ public class BeetleAI : MonoBehaviour
             Debug.LogError("Koloni üssü bulunamadı! 'ColonyBase' tag'ine sahip bir obje oluşturun.");
         }
         
-        // NavMesh üzerinde olduğundan emin ol
         PlaceOnNavMesh();
-        
-        // İlk kararı ver
         MakeDecision();
     }
     
-    // Böceği NavMesh üzerine yerleştir
     private void PlaceOnNavMesh()
     {
         NavMeshHit hit;
         if (NavMesh.SamplePosition(transform.position, out hit, 10f, NavMesh.AllAreas))
         {
             transform.position = hit.position;
-            agent.Warp(hit.position); // Ajanı doğrudan NavMesh'e yerleştir
-            Debug.Log($"{gameObject.name} NavMesh üzerine yerleştirildi.");
+            agent.Warp(hit.position);
         }
         else
         {
@@ -73,111 +89,96 @@ public class BeetleAI : MonoBehaviour
     
     private void Update()
     {
-        // Belirli aralıklarla karar verme
-        if (Time.time - lastDecisionTime > decisionInterval)
+        // Karar verme mekanizması, eğer boşta ise daha sık karar verebilir
+        float currentDecisionInterval = (currentState == BeetleState.Idle || currentState == BeetleState.SearchingForEnemy) ? 1f : decisionInterval;
+        if (Time.time - lastDecisionTime > currentDecisionInterval)
         {
             MakeDecision();
             lastDecisionTime = Time.time;
         }
-        
-        // Mevcut duruma göre davranış
+
+        // Mevcut duruma göre sürekli güncellenen davranışlar
+        // YENİ EKLENDİ: Savaşçı durumları için case'ler eklendi
         switch (currentState)
         {
             case BeetleState.Idle:
-                // Boşta durma, yeni görev bekleme
+                agent.isStopped = true;
                 break;
                 
             case BeetleState.SearchingResource:
-                // Kaynak ara
-                SearchForResource();
+                // Karar verme mekanizması bu durumu tetikler, burada sürekli bir eyleme gerek yok.
                 break;
                 
             case BeetleState.CollectingResource:
-                // Hedef kaynağa doğru hareket et
-                if (targetResource != null)
-                {
-                    // NavMesh üzerinde olduğundan emin ol
-                    NavMeshHit hit;
-                    if (NavMesh.SamplePosition(targetResource.position, out hit, 5f, NavMesh.AllAreas))
-                    {
-                        agent.SetDestination(hit.position);
-                    }
-                    
-                    // Kaynağa yaklaştıysa
-                    if (Vector3.Distance(transform.position, targetResource.position) < 1f)
-                    {
-                        // Kaynak toplama işlemi Beetle.cs'deki OnTriggerEnter tarafından yapılacak
-                        // Yeni görev ara
-                        currentState = BeetleState.Idle;
-                    }
-                }
-                else
-                {
-                    // Hedef kaynak yok olmuşsa, yeni görev ara
-                    currentState = BeetleState.Idle;
-                }
+                HandleCollectingResource();
                 break;
                 
             case BeetleState.ReturningToBase:
-                // Üsse dön
-                if (colonyBase != null)
-                {
-                    // NavMesh üzerinde olduğundan emin ol
-                    NavMeshHit hit;
-                    if (NavMesh.SamplePosition(colonyBase.position, out hit, 5f, NavMesh.AllAreas))
-                    {
-                        agent.SetDestination(hit.position);
-                    }
-                    
-                    // Üsse yaklaştıysa
-                    if (Vector3.Distance(transform.position, colonyBase.position) < 1f)
-                    {
-                        // Envanter boşaltma işlemi ColonyBase.cs'deki OnTriggerEnter tarafından yapılacak
-                        // Yeni görev ara
-                        currentState = BeetleState.Idle;
-                    }
-                }
+                HandleReturningToBase();
+                break;
+
+            // --- YENİ SAVAŞÇI DAVRANIŞLARI ---
+            case BeetleState.SearchingForEnemy:
+                // Karar verme mekanizması tetikler, sürekli eylem gerekmez.
+                // İsterseniz burada rastgele gezinme (patrol) davranışı eklenebilir.
+                agent.isStopped = true;
+                break;
+
+            case BeetleState.MovingToEnemy:
+                HandleMovingToEnemy();
+                break;
+
+            case BeetleState.AttackingEnemy:
+                HandleAttackingEnemy();
                 break;
         }
     }
     
-    // Böcek türüne göre karar verme
+    // Böcek türüne göre karar verme fonksiyonu
     private void MakeDecision()
     {
-        // Böcek envanteri doluysa üsse dön
-        if (beetle.HasItems())
+        // Eğer hedefimiz olan düşman ölmüşse, hedefi sıfırla
+        if (targetEnemy == null && (currentState == BeetleState.MovingToEnemy || currentState == BeetleState.AttackingEnemy))
+        {
+            currentState = BeetleState.SearchingForEnemy;
+        }
+
+        // İşçi/Keşifçi böceklerin envanteri doluysa üsse dön
+        if (beetleType != BeetleType.Warrior && beetle.HasItems())
         {
             currentState = BeetleState.ReturningToBase;
             return;
         }
         
-        // Böcek türüne göre davranış
+        // Böcek türüne göre ana davranış
         switch (beetleType)
         {
             case BeetleType.Worker:
-                // İşçi böcek malzeme toplar
-                SearchForResource();
-                break;
-                
             case BeetleType.Explorer:
-                // Keşifçi böcek haritayı keşfeder ve kırıntı/su arar
+                currentState = BeetleState.SearchingResource;
                 SearchForResource();
                 break;
                 
             case BeetleType.Master:
-                // Usta böcek inşa edilecek yapıları arar
-                // (Bu kısım daha sonra yapı inşa sistemi eklendiğinde tamamlanacak)
+                // Usta böcek mantığı
+                currentState = BeetleState.Idle;
                 break;
                 
+            // YENİ EKLENDİ: Savaşçı böcek mantığı
             case BeetleType.Warrior:
-                // Savaşçı böcek savunma bölgelerine yönelir
-                // (Bu kısım daha sonra savunma sistemi eklendiğinde tamamlanacak)
+                // Savaşçı böcek malzeme toplamaz, sadece savaşır.
+                // Eğer bir hedefi yoksa, yeni bir düşman arar.
+                if (targetEnemy == null)
+                {
+                    currentState = BeetleState.SearchingForEnemy;
+                    SearchForEnemy();
+                }
                 break;
         }
     }
-    
-    // Kaynak arama
-    private void SearchForResource()
+
+    #region Kaynak Toplama Davranışları
+     private void SearchForResource()
     {
         // Çevredeki kaynakları bul
         Collider[] hitColliders = Physics.OverlapSphere(transform.position, searchRadius, resourceLayer);
@@ -213,11 +214,140 @@ public class BeetleAI : MonoBehaviour
         // ... (Geri kalan kod)
     }
 
-    
-    // Arama mesafesini görselleştirmek için (sadece editor'da)
+
+    private void HandleCollectingResource()
+    {
+        if (targetResource == null) { currentState = BeetleState.Idle; return; }
+        agent.SetDestination(targetResource.position);
+        if (Vector3.Distance(transform.position, targetResource.position) < 1.5f)
+        {
+            currentState = BeetleState.Idle;
+        }
+    }
+
+    private void HandleReturningToBase()
+    {
+        if (colonyBase == null) { currentState = BeetleState.Idle; return; }
+        agent.SetDestination(colonyBase.position);
+        if (Vector3.Distance(transform.position, colonyBase.position) < 2f)
+        {
+            currentState = BeetleState.Idle;
+        }
+    }
+    #endregion
+
+    #region Savaşçı Davranışları (YENİ EKLENEN FONKSİYONLAR)
+
+    // Etrafta düşman arar
+    private void SearchForEnemy()
+    {
+        Collider[] enemies = Physics.OverlapSphere(transform.position, enemySearchRadius, enemyLayer);
+
+        Transform closestEnemy = null;
+        float minDistance = Mathf.Infinity;
+
+        foreach (var enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestEnemy = enemy.transform;
+            }
+        }
+
+        if (closestEnemy != null)
+        {
+            targetEnemy = closestEnemy;
+            currentState = BeetleState.MovingToEnemy;
+            Debug.Log($"{gameObject.name} düşman buldu: {targetEnemy.name} ve ona doğru gidiyor.");
+        }
+    }
+
+    // Düşmana doğru hareket eder
+    private void HandleMovingToEnemy()
+    {
+        if (targetEnemy == null)
+        {
+            currentState = BeetleState.SearchingForEnemy;
+            agent.isStopped = true;
+            return;
+        }
+
+        agent.isStopped = false;
+        agent.SetDestination(targetEnemy.position);
+
+        // Eğer saldırı menziline girdiyse, saldırma durumuna geç
+        if (Vector3.Distance(transform.position, targetEnemy.position) <= attackRange)
+        {
+            currentState = BeetleState.AttackingEnemy;
+        }
+    }
+
+    // Düşmana saldırır
+    private void HandleAttackingEnemy()
+    {
+        if (targetEnemy == null)
+        {
+            currentState = BeetleState.SearchingForEnemy;
+            agent.isStopped = true;
+            return;
+        }
+
+        // Düşman menzilden çıkarsa tekrar peşine düş
+        if (Vector3.Distance(transform.position, targetEnemy.position) > attackRange)
+        {
+            currentState = BeetleState.MovingToEnemy;
+            return;
+        }
+
+        // Hareketi durdur ve düşmana dön
+        agent.isStopped = true;
+        transform.LookAt(targetEnemy);
+
+        // Saldırı bekleme süresi dolduysa saldır
+        if (Time.time > lastAttackTime + attackCooldown)
+        {
+            PerformAttack();
+            lastAttackTime = Time.time;
+        }
+    }
+
+    // Saldırı işlemini gerçekleştirir
+    private void PerformAttack()
+    {
+        Debug.Log($"{gameObject.name}, {targetEnemy.name} adlı düşmana saldırıyor!");
+        // Burada saldırı animasyonunu tetikleyebilirsiniz.
+        // Örn: animator.SetTrigger("Attack");
+
+        // Düşmanın can sistemine erişip hasar ver
+        // ÖNEMLİ: Düşman objelerinde "CanSistemi" adında bir script olmalı.
+        // Bu scriptin içinde de "HasarAl(int miktar)" adında public bir fonksiyon olmalı.
+        CanSistemi enemyHealth = targetEnemy.GetComponent<CanSistemi>();
+        if (enemyHealth != null)
+        {
+            enemyHealth.HasarAl(attackDamage);
+        }
+        else
+        {
+            Debug.LogWarning($"{targetEnemy.name} üzerinde CanSistemi scripti bulunamadı!");
+        }
+    }
+    #endregion
+
     private void OnDrawGizmosSelected()
     {
+        // Kaynak arama yarıçapını göster
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, searchRadius);
+
+        // YENİ EKLENDİ: Düşman arama ve saldırı menzilini göster
+        if (beetleType == BeetleType.Warrior)
+        {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawWireSphere(transform.position, enemySearchRadius);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, attackRange);
+        }
     }
 }
