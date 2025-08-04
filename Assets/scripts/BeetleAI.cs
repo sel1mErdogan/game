@@ -134,7 +134,6 @@ public class BeetleAI : MonoBehaviour
         }
     }
     
-    // Böcek türüne göre karar verme fonksiyonu
     private void MakeDecision()
     {
         // Eğer hedefimiz olan düşman ölmüşse, hedefi sıfırla
@@ -144,30 +143,38 @@ public class BeetleAI : MonoBehaviour
         }
 
         // İşçi/Keşifçi böceklerin envanteri doluysa üsse dön
-        if (beetleType != BeetleType.Warrior && beetle.HasItems())
+        if ((beetleType == BeetleType.Worker || beetleType == BeetleType.Explorer) && beetle.HasItems())
         {
-            currentState = BeetleState.ReturningToBase;
+            // Eğer zaten üsse dönmüyorsa, üsse dönmeye başla
+            if (currentState != BeetleState.ReturningToBase)
+            {
+                Debug.Log($"{gameObject.name} ({beetleType}) envanteri dolu, üsse dönüyor.");
+                currentState = BeetleState.ReturningToBase;
+            }
             return;
         }
-        
+    
         // Böcek türüne göre ana davranış
         switch (beetleType)
         {
             case BeetleType.Worker:
             case BeetleType.Explorer:
-                currentState = BeetleState.SearchingResource;
-                SearchForResource();
+                // Eğer böcek boştaysa veya bir kaynağı toplamayı bitirdiyse, yeni kaynak ara
+                if (currentState == BeetleState.Idle || currentState == BeetleState.CollectingResource)
+                {
+                    Debug.Log($"{gameObject.name} ({beetleType}) kaynak arıyor.");
+                    currentState = BeetleState.SearchingResource;
+                    SearchForResource();
+                }
                 break;
-                
+            
             case BeetleType.Master:
                 // Usta böcek mantığı
                 currentState = BeetleState.Idle;
                 break;
-                
-            // YENİ EKLENDİ: Savaşçı böcek mantığı
+            
             case BeetleType.Warrior:
-                // Savaşçı böcek malzeme toplamaz, sadece savaşır.
-                // Eğer bir hedefi yoksa, yeni bir düşman arar.
+                // Savaşçı böcek mantığı
                 if (targetEnemy == null)
                 {
                     currentState = BeetleState.SearchingForEnemy;
@@ -176,6 +183,7 @@ public class BeetleAI : MonoBehaviour
                 break;
         }
     }
+
 
     #region Kaynak Toplama Davranışları
      private void SearchForResource()
@@ -227,13 +235,31 @@ public class BeetleAI : MonoBehaviour
 
     private void HandleReturningToBase()
     {
-        if (colonyBase == null) { currentState = BeetleState.Idle; return; }
+        if (colonyBase == null) 
+        { 
+            Debug.LogError("Koloni üssü bulunamadı!");
+            currentState = BeetleState.Idle; 
+            return; 
+        }
+    
+        // Böceğin üsse doğru gitmesini sağla
+        agent.isStopped = false;
         agent.SetDestination(colonyBase.position);
+    
+        // Eğer böcek üsse yeterince yaklaştıysa, durumunu değiştir
+        // Burada envanteri boşaltmıyoruz çünkü ColonyBase sınıfı OnTriggerEnter ile bunu yapıyor
         if (Vector3.Distance(transform.position, colonyBase.position) < 2f)
         {
+            Debug.Log($"{gameObject.name} ({beetleType}) üsse ulaştı. Envanteri boşaltılacak.");
+            // Durumu boşta olarak güncelle
             currentState = BeetleState.Idle;
+        
+            // Böcek üsse ulaştığında yeni bir karar vermesi için zamanı sıfırla
+            lastDecisionTime = Time.time - decisionInterval; // Hemen yeni karar almasını sağla
         }
     }
+
+
     #endregion
 
     #region Savaşçı Davranışları (YENİ EKLENEN FONKSİYONLAR)

@@ -102,9 +102,11 @@ namespace KingdomBug
                     return false;
             }
         }
-
-
-
+        // Beetle sınıfı içine, diğer public metotların yanına ekleyin
+        public BeetleType GetBeetleType()
+        {
+            return beetleType;
+        }
         
         // Böcek üsse döndüğünde envanterini boşaltma
         public Dictionary<ItemData, int> EmptyInventory()
@@ -115,15 +117,19 @@ namespace KingdomBug
             return items;
         }
         
-        // Böceğin envanterinde item var mı kontrol
         public bool HasItems()
         {
-            return beetleInventory.Count > 0;
+            int totalItems = 0;
+            foreach (var pair in beetleInventory)
+            {
+                totalItems += pair.Value;
+            }
+    
+            bool hasAnyItems = totalItems > 0;
+            Debug.Log($"{beetleType} böceğinin envanterinde {totalItems} adet item var. HasItems: {hasAnyItems}");
+            return hasAnyItems;
         }
-        public BeetleType GetBeetleType()
-        {
-            return beetleType;
-        }
+
         // Envanterdeki toplam item sayısını hesapla
         private int GetTotalItemCount()
         {
