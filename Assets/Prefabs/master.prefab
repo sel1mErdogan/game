@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 2139199916646885640}
   - component: {fileID: 3996567588016504727}
   - component: {fileID: 5170715287860797283}
+  - component: {fileID: 2035000532400430470}
   m_Layer: 0
   m_Name: master
   m_TagString: Untagged
@@ -31,8 +32,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7017745708735170364}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 18.5, y: 0.5, z: 7.5}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -941.5, y: -539.5, z: 7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -156,7 +157,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7017745708735170364}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c7b760b806c67042a6c8980e8ef9679, type: 3}
   m_Name: 
@@ -200,3 +201,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2035000532400430470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7017745708735170364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c8da30f83beea142a4cf71c6b93d3d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wanderRadius: 10
+  minWanderWaitTime: 3
+  maxWanderWaitTime: 7

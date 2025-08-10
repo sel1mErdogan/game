@@ -1,4 +1,3 @@
-// InventoryManager.cs - Değişiklikler
 using System.Collections.Generic;
 using UnityEngine;
 using System;
@@ -7,147 +6,85 @@ namespace InventorySystem
 {
     public class InventoryManager : MonoBehaviour
     {
-        // Singleton Pattern
         public static InventoryManager Instance { get; private set; }
-
-        // Farklı envanter türleri için dictionary
-        private Dictionary<string, Dictionary<ItemData, int>> inventories = new Dictionary<string, Dictionary<ItemData, int>>();
-        
-        // Aktif envanter
-        [SerializeField] private string activeInventory = "Colony Stockpile";
-        
-        [SerializeField] private int maxCapacity = 20;
-
-        // Envanter değiştiğinde UI'ı güncellemek için bir event
+        private Dictionary<ItemData, int> colonyStockpile = new Dictionary<ItemData, int>();
         public event Action OnInventoryChanged;
 
         private void Awake()
         {
-            // Singleton kurulumu
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                Instance = this;
-            }
-            
-            // Varsayılan envanterleri oluştur
-            inventories["Colony Stockpile"] = new Dictionary<ItemData, int>();
-            inventories["Player Backpack"] = new Dictionary<ItemData, int>();
+            if (Instance != null && Instance != this) Destroy(gameObject);
+            else Instance = this;
         }
 
-        /// <summary>
-        /// Belirtilen envantere yeni bir eşya ekler.
-        /// </summary>
-        public bool AddItem(ItemData item, int quantity, string inventoryName = null)
+        // Böceklerin veya oyuncunun envantere kaynak eklemesi için.
+        public void AddItem(ItemData item, int quantity)
         {
-            // Eğer envanter adı belirtilmemişse, aktif envanteri kullan
-            if (string.IsNullOrEmpty(inventoryName))
-            {
-                inventoryName = activeInventory;
-            }
-            
-            // Belirtilen envanter var mı kontrol et
-            if (!inventories.ContainsKey(inventoryName))
-            {
-                Debug.LogError($"'{inventoryName}' adında bir envanter bulunamadı!");
-                return false;
-            }
-            
-            var inventory = inventories[inventoryName];
-            
-            // Envanter kapasitesi kontrolü
-            int currentTotalItems = GetTotalItemCount(inventoryName);
-            if (currentTotalItems + quantity > maxCapacity)
-            {
-                Debug.LogWarning($"'{inventoryName}' envanteri dolu! Eşya eklenemedi.");
-                return false;
-            }
+            if (item == null || quantity <= 0) return;
 
-            // Eşya envanterde zaten varsa, sayısını artır
-            if (inventory.ContainsKey(item))
+            if (colonyStockpile.ContainsKey(item))
             {
-                inventory[item] += quantity;
+                colonyStockpile[item] += quantity;
             }
-            // Yoksa, envantere yeni bir giriş olarak ekle
             else
             {
-                inventory.Add(item, quantity);
+                colonyStockpile.Add(item, quantity);
             }
-
-            Debug.Log($"{quantity} adet {item.itemName}, '{inventoryName}' envanterine eklendi.");
-            
-            // UI'ın güncellenmesi için event'i tetikle
             OnInventoryChanged?.Invoke();
-            return true;
         }
 
-        /// <summary>
-        /// Belirtilen envanterdeki tüm eşyaları ve adetlerini döner.
-        /// </summary>
-        public Dictionary<ItemData, int> GetInventory(string inventoryName = null)
+        // YENİ EKLENDİ: İnşaat iptal edildiğinde kaynakları geri iade etmek için.
+        public void AddResources(List<ResourceCost> costs)
         {
-            // Eğer envanter adı belirtilmemişse, aktif envanteri kullan
-            if (string.IsNullOrEmpty(inventoryName))
-            {
-                inventoryName = activeInventory;
-            }
-            
-            // Belirtilen envanter var mı kontrol et
-            if (!inventories.ContainsKey(inventoryName))
-            {
-                Debug.LogError($"'{inventoryName}' adında bir envanter bulunamadı!");
-                return new Dictionary<ItemData, int>();
-            }
-            
-            return inventories[inventoryName];
-        }
+            if (costs == null) return;
 
-        /// <summary>
-        /// Aktif envanteri değiştirir.
-        /// </summary>
-        public void SetActiveInventory(string inventoryName)
-        {
-            if (inventories.ContainsKey(inventoryName))
+            foreach (var cost in costs)
             {
-                activeInventory = inventoryName;
-                OnInventoryChanged?.Invoke();
-            }
-            else
-            {
-                Debug.LogError($"'{inventoryName}' adında bir envanter bulunamadı!");
+                AddItem(cost.resource, cost.amount);
             }
         }
 
-        /// <summary>
-        /// Belirtilen envanterdeki toplam eşya sayısını hesaplar.
-        /// </summary>
-        private int GetTotalItemCount(string inventoryName = null)
+        // Bir yapı inşa etmek için kaynakları harcar.
+        public bool SpendResources(List<ResourceCost> costs)
         {
-            // Eğer envanter adı belirtilmemişse, aktif envanteri kullan
-            if (string.IsNullOrEmpty(inventoryName))
+            // 1. Adım: Önce kaynakların yeterli olup olmadığını kontrol et.
+            foreach (var cost in costs)
             {
-                inventoryName = activeInventory;
+                if (!HasEnough(cost.resource, cost.amount))
+                {
+                    Debug.LogWarning($"Yetersiz kaynak: {cost.amount} adet {cost.resource.itemName} gerekli.");
+                    return false; // Yeterli kaynak yok, işlemi baştan iptal et.
+                }
             }
-            
-            // Belirtilen envanter var mı kontrol et
-            if (!inventories.ContainsKey(inventoryName))
+
+            // 2. Adım: Tüm kaynaklar yeterliyse, şimdi hepsini harca.
+            foreach (var cost in costs)
             {
-                Debug.LogError($"'{inventoryName}' adında bir envanter bulunamadı!");
-                return 0;
+                colonyStockpile[cost.resource] -= cost.amount;
+                // Eğer bir kaynağın sayısı sıfıra düşerse, envanter listesinden kaldır.
+                if (colonyStockpile[cost.resource] <= 0)
+                {
+                    colonyStockpile.Remove(cost.resource);
+                }
             }
-            
-            var inventory = inventories[inventoryName];
-            int total = 0;
-            
-            foreach (var count in inventory.Values)
+
+            OnInventoryChanged?.Invoke();
+            return true; // İşlem başarılı.
+        }
+
+        // Belirli bir kaynaktan yeterli miktarda olup olmadığını kontrol eder.
+        private bool HasEnough(ItemData resource, int amount)
+        {
+            if (colonyStockpile.TryGetValue(resource, out int currentAmount))
             {
-                total += count;
+                return currentAmount >= amount;
             }
-            
-            return total;
+            return false; // Envanterde o kaynaktan hiç yok.
+        }
+        
+        // UI'ın envanteri okuması için.
+        public Dictionary<ItemData, int> GetColonyStockpile()
+        {
+            return colonyStockpile;
         }
     }
 }

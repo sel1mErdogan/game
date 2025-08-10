@@ -1,5 +1,3 @@
-// InventoryUIManager.cs
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,38 +14,27 @@ public class InventoryUIManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private string inventoryTitle = "Colony Stockpile";
-    [SerializeField] private int gridColumns = 3;
-    [SerializeField] private int gridRows = 3;
 
     private List<ItemSlotUI> itemSlots = new List<ItemSlotUI>();
     private bool isInventoryOpen = false;
 
     private void Start()
     {
-        // Envanter panelini başlangıçta kapat
         inventoryPanel.SetActive(false);
-        
-        // Envanter butonuna tıklama olayını ekle
         inventoryButton.onClick.AddListener(ToggleInventory);
-        
-        // Envanter başlığını ayarla
         inventoryTitleText.text = inventoryTitle;
-        
-        // Slot'ları oluştur
         CreateItemSlots();
         
-        // Envanter değişim olayına abone ol
-        InventoryManager.Instance.OnInventoryChanged += UpdateInventoryUI;
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.OnInventoryChanged += UpdateInventoryUI;
     }
     
     private void OnDestroy()
     {
-        // Olay aboneliğini kaldır
         if (InventoryManager.Instance != null)
             InventoryManager.Instance.OnInventoryChanged -= UpdateInventoryUI;
     }
     
-    // Envanter panelini açıp kapatma
     public void ToggleInventory()
     {
         isInventoryOpen = !isInventoryOpen;
@@ -59,22 +46,19 @@ public class InventoryUIManager : MonoBehaviour
         }
     }
     
-    // Grid için slot'ları oluştur
     private void CreateItemSlots()
     {
-        // Önce varsa eski slotları temizle
         foreach (Transform child in itemsGrid)
         {
             Destroy(child.gameObject);
         }
         itemSlots.Clear();
         
-        // Yeni slotları oluştur
-        for (int i = 0; i < gridRows * gridColumns; i++)
+        int slotCount = 20; // Bu değeri envanter kapasitesine göre ayarlayabilirsin
+        for (int i = 0; i < slotCount; i++)
         {
             GameObject slotObj = Instantiate(itemSlotPrefab, itemsGrid);
             ItemSlotUI slot = slotObj.GetComponent<ItemSlotUI>();
-            
             if (slot != null)
             {
                 slot.ClearSlot();
@@ -83,22 +67,19 @@ public class InventoryUIManager : MonoBehaviour
         }
     }
     
-    // Envanter içeriğini UI'a yansıt
     private void UpdateInventoryUI()
     {
         if (!isInventoryOpen) return;
         
-        // Tüm slotları temizle
         foreach (var slot in itemSlots)
         {
             slot.ClearSlot();
         }
         
-        // Envanter içeriğini al
-        var inventory = InventoryManager.Instance.GetInventory();
+        // DÜZELTME: Fonksiyon adı GetColonyStockpile olarak değiştirildi.
+        var inventory = InventoryManager.Instance.GetColonyStockpile();
         int slotIndex = 0;
         
-        // Her eşyayı bir slota yerleştir
         foreach (var item in inventory)
         {
             if (slotIndex < itemSlots.Count)
@@ -108,7 +89,6 @@ public class InventoryUIManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("Envanterde gösterilecek yer kalmadı!");
                 break;
             }
         }
