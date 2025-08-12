@@ -1,12 +1,13 @@
 using UnityEngine;
-using InventorySystem; // InventoryManager'a erişim için
-using System.Collections.Generic; // List kullanmak için
+using UnityEngine.InputSystem;
+using InventorySystem;
+using System.Collections.Generic;
 
 public class BuildingManager : MonoBehaviour
 {
     public static BuildingManager Instance { get; private set; }
 
-    [SerializeField] private LayerMask groundLayer; // İnşaatın yapılabileceği zemin katmanı
+    [SerializeField] private LayerMask groundLayer;
     private BuildingData selectedBuilding;
     private GameObject placementGhost;
     private bool isInPlacementMode = false;
@@ -19,13 +20,14 @@ public class BuildingManager : MonoBehaviour
 
     void Update()
     {
-        if (isInPlacementMode)
+        if (!isInPlacementMode || Mouse.current == null)
         {
-            HandlePlacementMode();
+            return;
         }
+        
+        HandlePlacementMode();
     }
 
-    // UI butonları bu fonksiyonu çağıracak
     public void StartPlacementMode(BuildingData building)
     {
         if (InventoryManager.Instance.SpendResources(building.requiredMaterials))
@@ -36,28 +38,39 @@ public class BuildingManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("İnşaat için yeterli malzeme yok!");
-            // Burada oyuncuya bir uyarı sesi veya mesajı gösterebilirsin.
+            // Bu önemli bir uyarı olduğu için kalabilir.
+            Debug.LogWarning("İnşaat için yeterli malzeme yok!");
         }
     }
 
     private void HandlePlacementMode()
     {
-        // Fare pozisyonunu dünyaya çevir
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Vector2 mousePosition = Mouse.current.position.ReadValue();
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+        
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
         {
-            placementGhost.transform.position = hit.point;
-        }
+            // --- YÜKSEKLİK DÜZELTMESİ BURADA ---
+            Vector3 position = hit.point;
 
-        // Sol tıklama ile inşaatı onayla
-        if (Input.GetMouseButtonDown(0))
+            // Hayalet objenin yüksekliğini alıp yarısını ekleyerek objeyi zeminin üzerine çıkar.
+            // Bu, objenin yere gömülmesini engeller.
+            Renderer ghostRenderer = placementGhost.GetComponentInChildren<Renderer>();
+            if (ghostRenderer != null)
+            {
+                position.y += ghostRenderer.bounds.size.y / 2;
+            }
+
+            placementGhost.transform.position = position;
+        }
+        // Test amaçlı Debug.Log mesajları kaldırıldı.
+
+        if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             PlaceBuilding();
         }
 
-        // Sağ tıklama ile iptal et
-        if (Input.GetMouseButtonDown(1))
+        if (Mouse.current.rightButton.wasPressedThisFrame)
         {
             CancelPlacement();
         }
@@ -65,25 +78,20 @@ public class BuildingManager : MonoBehaviour
 
     private void PlaceBuilding()
     {
-        // İnşaat alanını oluştur
+        // İnşaat alanını, yüksekliği zaten düzeltilmiş olan hayaletin pozisyonuna kur.
         GameObject constructionSiteObj = Instantiate(selectedBuilding.constructionSitePrefab, placementGhost.transform.position, placementGhost.transform.rotation);
         
-        // ConstructionSite script'ine hangi binayı inşa ettiğini söyle
         ConstructionSite siteScript = constructionSiteObj.GetComponent<ConstructionSite>();
         if (siteScript != null)
         {
             siteScript.Initialize(selectedBuilding);
         }
         
-        // TODO: Boşta bir Usta Böcek bul ve ona görev ver.
-        // FindAvailableMasterBeetle().AssignBuildTask(constructionSiteObj.transform);
-
         CleanUpPlacementMode();
     }
 
     private void CancelPlacement()
     {
-        // Harcanan kaynakları geri iade et
         InventoryManager.Instance.AddResources(selectedBuilding.requiredMaterials);
         CleanUpPlacementMode();
     }
