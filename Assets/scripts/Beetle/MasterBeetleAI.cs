@@ -1,15 +1,14 @@
 using UnityEngine;
 using UnityEngine.AI;
-using KingdomBug;
 
-[RequireComponent(typeof(NavMeshAgent), typeof(Beetle))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class MasterBeetleAI : MonoBehaviour
 {
     private enum State
     {
-        Idle,               // Boşta, görev bekliyor
-        MovingToBuildSite,  // İnşaat alanına gidiyor
-        Building            // İnşaat yapıyor
+        Idle,
+        MovingToBuildSite,
+        Building
     }
 
     private NavMeshAgent agent;
@@ -26,31 +25,42 @@ public class MasterBeetleAI : MonoBehaviour
     {
         if (currentState == State.MovingToBuildSite)
         {
-            // Hedefe ulaştıysak, inşaata başla
+            if (buildTarget == null)
+            {
+                TaskFinished();
+                return;
+            }
+
             if (!agent.pathPending && agent.remainingDistance < 2f)
             {
                 currentState = State.Building;
                 agent.isStopped = true;
-                // Burada "çalışma" animasyonunu başlatabilirsin
+                
+                ConstructionSite site = buildTarget.GetComponent<ConstructionSite>();
+                if (site != null)
+                {
+                    site.StartConstructing(this);
+                }
             }
         }
     }
 
-    // BuildingManager bu fonksiyonu çağırarak görev verir
     public void AssignBuildTask(Transform constructionSite)
     {
+        // --- TEŞHİS MESAJI BURADA ---
+        Debug.Log($"4. ADIM: '{gameObject.name}' adlı böcek görev emrini ALDI! Hedef: {constructionSite.position}");
+
         buildTarget = constructionSite;
         currentState = State.MovingToBuildSite;
         agent.isStopped = false;
         agent.SetDestination(buildTarget.position);
     }
 
-    // ConstructionSite bu fonksiyonu çağırarak görevin bittiğini söyler
     public void TaskFinished()
     {
         currentState = State.Idle;
         buildTarget = null;
-        // Burada "boşta durma" animasyonuna geri dönebilirsin
+        agent.isStopped = true;
     }
 
     public bool IsAvailable()

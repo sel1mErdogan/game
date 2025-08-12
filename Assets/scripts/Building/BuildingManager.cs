@@ -12,6 +12,9 @@ public class BuildingManager : MonoBehaviour
     private GameObject placementGhost;
     private bool isInPlacementMode = false;
 
+    // --- YENİ EKLENDİ: Titremeyi önlemek için ---
+    private float placementYOffset; // Yükseklik farkını hafızada tutacak değişken.
+
     private void Awake()
     {
         if (Instance != null && Instance != this) Destroy(gameObject);
@@ -20,12 +23,10 @@ public class BuildingManager : MonoBehaviour
 
     void Update()
     {
-        if (!isInPlacementMode || Mouse.current == null)
+        if (isInPlacementMode)
         {
-            return;
+            HandlePlacementMode();
         }
-        
-        HandlePlacementMode();
     }
 
     public void StartPlacementMode(BuildingData building)
@@ -35,10 +36,21 @@ public class BuildingManager : MonoBehaviour
             selectedBuilding = building;
             placementGhost = Instantiate(building.placementGhostPrefab);
             isInPlacementMode = true;
+
+            // --- YENİ EKLENDİ: Yükseklik farkını SADECE BİR KERE HESAPLA ---
+            // Hayalet objenin pivot noktası ile en alt noktası arasındaki mesafeyi bul ve hafızaya al.
+            Collider ghostCollider = placementGhost.GetComponentInChildren<Collider>();
+            if (ghostCollider != null)
+            {
+                placementYOffset = placementGhost.transform.position.y - ghostCollider.bounds.min.y;
+            }
+            else
+            {
+                placementYOffset = 0f; // Collider yoksa, fark sıfırdır.
+            }
         }
         else
         {
-            // Bu önemli bir uyarı olduğu için kalabilir.
             Debug.LogWarning("İnşaat için yeterli malzeme yok!");
         }
     }
@@ -50,20 +62,10 @@ public class BuildingManager : MonoBehaviour
         
         if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
         {
-            // --- YÜKSEKLİK DÜZELTMESİ BURADA ---
-            Vector3 position = hit.point;
-
-            // Hayalet objenin yüksekliğini alıp yarısını ekleyerek objeyi zeminin üzerine çıkar.
-            // Bu, objenin yere gömülmesini engeller.
-            Renderer ghostRenderer = placementGhost.GetComponentInChildren<Renderer>();
-            if (ghostRenderer != null)
-            {
-                position.y += ghostRenderer.bounds.size.y / 2;
-            }
-
+            // --- YENİ EKLENDİ: Pozisyonu, hafızadaki sabit değere göre ayarla ---
+            Vector3 position = new Vector3(hit.point.x, hit.point.y + placementYOffset, hit.point.z);
             placementGhost.transform.position = position;
         }
-        // Test amaçlı Debug.Log mesajları kaldırıldı.
 
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
@@ -78,16 +80,44 @@ public class BuildingManager : MonoBehaviour
 
     private void PlaceBuilding()
     {
-        // İnşaat alanını, yüksekliği zaten düzeltilmiş olan hayaletin pozisyonuna kur.
         GameObject constructionSiteObj = Instantiate(selectedBuilding.constructionSitePrefab, placementGhost.transform.position, placementGhost.transform.rotation);
-        
         ConstructionSite siteScript = constructionSiteObj.GetComponent<ConstructionSite>();
         if (siteScript != null)
         {
             siteScript.Initialize(selectedBuilding);
         }
         
+        AssignTaskToMasterBeetle(constructionSiteObj.transform);
         CleanUpPlacementMode();
+    }
+
+    private void AssignTaskToMasterBeetle(Transform siteTransform)
+    {
+        MasterBeetleAI[] allMasters = FindObjectsOfType<MasterBeetleAI>();
+        MasterBeetleAI closestAvailableMaster = null;
+        float minDistance = float.MaxValue;
+
+        foreach (var master in allMasters)
+        {
+            if (master.IsAvailable())
+            {
+                float distance = Vector3.Distance(master.transform.position, siteTransform.position);
+                if (distance < minDistance)
+                {
+                    minDistance = distance;
+                    closestAvailableMaster = master;
+                }
+            }
+        }
+
+        if (closestAvailableMaster != null)
+        {
+            closestAvailableMaster.AssignBuildTask(siteTransform);
+        }
+        else
+        {
+            Debug.LogWarning("Boşta Usta Böcek bulunamadı!");
+        }
     }
 
     private void CancelPlacement()
