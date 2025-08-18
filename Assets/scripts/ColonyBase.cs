@@ -1,4 +1,3 @@
-// ColonyBase.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,42 +6,62 @@ using KingdomBug;
 
 public class ColonyBase : MonoBehaviour
 {
+    [Header("Üretim Ayarları")]
+    [Tooltip("Yeni böceklerin doğacağı nokta")]
+    [SerializeField] private Transform spawnPoint; 
+    [Tooltip("Bu üste üretilebilecek birimlerin UnitData listesi")]
+    [SerializeField] private List<UnitData> producibleUnits;
+
+    public List<UnitData> GetProducibleUnits()
+    {
+        return producibleUnits;
+    }
+
+    public void StartTrainingUnit(UnitData unitToTrain)
+    {
+        if (!ColonyManager.Instance.AddPopulation(unitToTrain.populationCost)) return;
+
+        if (!InventoryManager.Instance.SpendResources(unitToTrain.productionCost))
+        {
+            ColonyManager.Instance.RemovePopulation(unitToTrain.populationCost);
+            return;
+        }
+
+        StartCoroutine(TrainUnitCoroutine(unitToTrain));
+    }
+
+    private IEnumerator TrainUnitCoroutine(UnitData unitData)
+    {
+        yield return new WaitForSeconds(unitData.productionTime);
+        if (unitData.unitPrefab != null && spawnPoint != null)
+        {
+            Instantiate(unitData.unitPrefab, spawnPoint.position, spawnPoint.rotation);
+        }
+    }
+
+    [Header("Kaynak Bırakma Ayarları")]
     [SerializeField] private float depositRadius = 5f;
-    [SerializeField] private string colonyInventoryName = "Colony Stockpile";
-    
-    private SphereCollider triggerCollider;
-    
+
     private void Awake()
     {
-        // Trigger collider oluştur
-        triggerCollider = gameObject.AddComponent<SphereCollider>();
-        triggerCollider.radius = depositRadius;
-        triggerCollider.isTrigger = true;
+        if (GetComponent<SphereCollider>() == null)
+        {
+            SphereCollider triggerCollider = gameObject.AddComponent<SphereCollider>();
+            triggerCollider.radius = depositRadius;
+            triggerCollider.isTrigger = true;
+        }
     }
-    
+
     private void OnTriggerEnter(Collider other)
     {
-        // Giren nesne bir böcek mi kontrol et
         Beetle beetle = other.GetComponent<Beetle>();
-        
         if (beetle != null && beetle.HasItems())
         {
-            // Böceğin envanterindeki itemları al
             Dictionary<ItemData, int> items = beetle.EmptyInventory();
-            
-            // Itemları koloni envanterine ekle
             foreach (var item in items)
             {
                 InventoryManager.Instance.AddItem(item.Key, item.Value);
-                Debug.Log($"Koloni envanterine {item.Value} adet {item.Key.itemName} eklendi.");
             }
         }
-    }
-    
-    // Üs bölgesini görselleştirmek için (sadece editor'da)
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, depositRadius);
     }
 }
