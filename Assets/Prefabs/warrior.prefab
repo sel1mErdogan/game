@@ -16,9 +16,10 @@ GameObject:
   - component: {fileID: 925184513106455234}
   - component: {fileID: 6932605195929281224}
   - component: {fileID: 3737392222270062866}
+  - component: {fileID: -183588455441628627}
   m_Layer: 0
   m_Name: warrior
-  m_TagString: Untagged
+  m_TagString: Beetle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -193,3 +194,16 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
+--- !u!114 &-183588455441628627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8369229967041416954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e91a2904f705ef94e91e59aa583b4e0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: e8d016d2bcdf18242848564d87025d26, type: 2}

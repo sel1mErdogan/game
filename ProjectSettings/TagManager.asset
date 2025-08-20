@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - ColonyBase
+  - Building
+  - Beetle
+  - ConstructionSite
   layers:
   - Default
   - TransparentFX

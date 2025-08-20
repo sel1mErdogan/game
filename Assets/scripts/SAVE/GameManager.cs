@@ -93,4 +93,11 @@ public class GameManager : MonoBehaviour
         // Mevcut oyunu kaydet
         SaveCurrentGame(); // Bu, zaten yazdığımız eski fonksiyonu çağırıyor.
     }
+    public void NotifyItemCollected(string id)
+    {
+        // Bu fonksiyon şimdilik sadece WorldItem'daki hatayı gidermek için var.
+        // Henüz toplanan item'ları kaydetme mantığı burada ekli değil.
+        
+    }
+
 }
