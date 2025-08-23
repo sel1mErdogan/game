@@ -55,4 +55,12 @@ public class ColonyManager : MonoBehaviour
         MaxPopulation += amount;
         OnPopulationChanged?.Invoke();
     }
+    // YENİ EKLENDİ: Kaydedilmiş veriden nüfus bilgilerini yükler.
+    public void LoadPopulationData(int current, int max)
+    {
+        this.CurrentPopulation = current;
+        this.MaxPopulation = max;
+        OnPopulationChanged?.Invoke(); // UI'ı güncellemek için event'i tetikle
+        Debug.Log($"Nüfus Yüklendi: {CurrentPopulation} / {MaxPopulation}");
+    }
 }

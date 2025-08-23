@@ -1,72 +1,59 @@
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
-using System;
 
 public static class SaveSystem
 {
-    private static readonly string saveFileNameFormat = "/gameData_{0}.json";
-    public static readonly int maxSaveSlots = 3;
+    private static readonly string SAVE_FOLDER = Application.persistentDataPath + "/Saves/";
+    private static readonly string SAVE_FILE_FORMAT = "gameData_{0}.json";
+    public const int MAX_SAVE_SLOTS = 3;
 
-    public static void SaveGame(int slotIndex, GameData data)
+    private static string GetSavePath(int slotIndex)
     {
-        if (string.IsNullOrEmpty(data.saveName))
-        {
-            data.saveName = $"My Kingdom {slotIndex + 1}";
-        }
-        data.lastSaved = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-
-        string json = JsonUtility.ToJson(data, true);
-        string path = Application.persistentDataPath + string.Format(saveFileNameFormat, slotIndex);
-        File.WriteAllText(path, json);
+        return SAVE_FOLDER + string.Format(SAVE_FILE_FORMAT, slotIndex);
     }
 
-    public static GameData LoadGame(int slotIndex)
+    public static void Save(int slotIndex, GameData data)
     {
-        string path = Application.persistentDataPath + string.Format(saveFileNameFormat, slotIndex);
-        if (File.Exists(path))
+        if (!Directory.Exists(SAVE_FOLDER)) Directory.CreateDirectory(SAVE_FOLDER);
+        
+        data.lastSaved = System.DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(GetSavePath(slotIndex), json);
+        Debug.Log($"Oyun {slotIndex} numaralı yuvaya kaydedildi.");
+    }
+
+    public static GameData Load(int slotIndex)
+    {
+        string filePath = GetSavePath(slotIndex);
+        if (File.Exists(filePath))
         {
-            string json = File.ReadAllText(path);
+            string json = File.ReadAllText(filePath);
             GameData data = JsonUtility.FromJson<GameData>(json);
             return data;
         }
         return null;
     }
 
-    public static void DeleteSave(int slotIndex)
+    public static void Delete(int slotIndex)
     {
-        string path = Application.persistentDataPath + string.Format(saveFileNameFormat, slotIndex);
-        if (File.Exists(path))
+        string filePath = GetSavePath(slotIndex);
+        if (File.Exists(filePath))
         {
-            File.Delete(path);
+            File.Delete(filePath);
+            Debug.Log($"Kayıt dosyası {slotIndex} silindi.");
         }
     }
 
-    public static List<GameData> GetAllSaveData()
+    public static List<GameData> LoadAllSaveProfiles()
     {
-        List<GameData> allData = new List<GameData>();
-        for (int i = 0; i < maxSaveSlots; i++)
-        {
-            allData.Add(LoadGame(i));
-        }
-        return allData;
-    }
+        if (!Directory.Exists(SAVE_FOLDER)) Directory.CreateDirectory(SAVE_FOLDER);
 
-    public static bool SaveFileExists(int slotIndex)
-    {
-        string path = Application.persistentDataPath + string.Format(saveFileNameFormat, slotIndex);
-        return File.Exists(path);
-    }
-
-    public static bool DoesAnySaveFileExist()
-    {
-        for (int i = 0; i < maxSaveSlots; i++)
+        List<GameData> allProfiles = new List<GameData>();
+        for (int i = 0; i < MAX_SAVE_SLOTS; i++)
         {
-            if (SaveFileExists(i))
-            {
-                return true;
-            }
+            allProfiles.Add(Load(i));
         }
-        return false;
+        return allProfiles;
     }
 }

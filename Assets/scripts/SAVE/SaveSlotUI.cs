@@ -1,71 +1,65 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement; // Sahne adını kontrol etmek için
 
 public class SaveSlotUI : MonoBehaviour
 {
-    [Header("UI Referansları")]
-    [SerializeField] private GameObject emptySlotInfo;
-    [SerializeField] private GameObject fullSlotInfo;
+    [Header("Görsel Elemanlar")]
+    [SerializeField] private GameObject fullSlotView;
+    [SerializeField] private GameObject emptySlotView;
     [SerializeField] private TextMeshProUGUI saveNameText;
     [SerializeField] private TextMeshProUGUI lastSavedText;
-    [SerializeField] private Button saveButton;
     [SerializeField] private Button loadButton;
-    [SerializeField] private Button deleteButton;
+    [SerializeField] private Button saveButton;
+    [SerializeField] private Button newGameButton;
+    [SerializeField] private Button deleteButton; 
 
     private int slotIndex;
-    private SaveLoadUI parentUI;
+    private SaveLoadMenu parentMenu;
 
-    public void Setup(int index, GameData data, SaveLoadUI ui)
+    private void Awake()
+    {
+        loadButton.onClick.AddListener(OnLoadClicked);
+        saveButton.onClick.AddListener(OnSaveClicked);
+        newGameButton.onClick.AddListener(OnNewGameClicked);
+        deleteButton.onClick.AddListener(OnDeleteClicked);
+    }
+
+    public void Setup(GameData data, int index, SaveLoadMenu menu)
     {
         slotIndex = index;
-        parentUI = ui;
+        parentMenu = menu;
 
-        if (data == null)
+        bool isSlotFull = data != null;
+        
+        fullSlotView.SetActive(isSlotFull);
+        emptySlotView.SetActive(!isSlotFull);
+        deleteButton.gameObject.SetActive(isSlotFull);
+
+        if (isSlotFull)
         {
-            emptySlotInfo.SetActive(true);
-            fullSlotInfo.SetActive(false);
-        }
-        else
-        {
-            emptySlotInfo.SetActive(false);
-            fullSlotInfo.SetActive(true);
             saveNameText.text = data.saveName;
             lastSavedText.text = data.lastSaved;
         }
-
-        saveButton.onClick.AddListener(OnSaveClick);
-        loadButton.onClick.AddListener(OnLoadClick);
-        deleteButton.onClick.AddListener(OnDeleteClick);
+        
+        // Ana Menü'de isek, yani oyun sahnesi açık değilse, "Kaydet" butonu tıklanamaz olsun.
+        bool isInGameScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "OyunSahnesi";
+        saveButton.interactable = isInGameScene && isSlotFull;
     }
 
-    public void OnSaveClick()
+    private void OnLoadClicked() => GameManager.Instance.LoadGame(slotIndex);
+    
+    private void OnSaveClicked() 
     {
-        // --- YENİ MANTIK BURADA ---
-        // Şu anki sahne Ana Menü mü?
-        if (SceneManager.GetActiveScene().name == "AnaMenu")
-        {
-            // Evet, o zaman yeni oyun başlat.
-            GameManager.Instance.StartNewGame(slotIndex);
-        }
-        else // Değilse, demek ki oyun sahnesindeyiz.
-        {
-            // O zaman mevcut oyunu bu yuvaya kaydet.
-            GameManager.Instance.SaveCurrentGame(slotIndex);
-            // Paneli yenile ki yeni kayıt görünsün.
-            parentUI.PopulateSaveSlots();
-        }
+        GameManager.Instance.SaveGame(slotIndex);
+        parentMenu.PopulateSlots(); // Tarih gibi bilgileri güncellemek için menüyü yenile
     }
-
-    public void OnLoadClick()
+    
+    private void OnNewGameClicked() => GameManager.Instance.StartNewGame(slotIndex);
+    
+    private void OnDeleteClicked()
     {
-        GameManager.Instance.ContinueGame(slotIndex);
-    }
-
-    public void OnDeleteClick()
-    {
-        SaveSystem.DeleteSave(slotIndex);
-        parentUI.PopulateSaveSlots();
+        SaveSystem.Delete(slotIndex);
+        parentMenu.PopulateSlots(); // Silindikten sonra menüyü yenile
     }
 }

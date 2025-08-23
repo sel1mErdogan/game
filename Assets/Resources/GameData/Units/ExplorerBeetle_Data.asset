@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExplorerBeetle_Data
   m_EditorClassIdentifier: 
   unitName: 
-  unitPrefab: {fileID: 0}
+  unitPrefab: {fileID: 5223103233990067536, guid: 9f3d2e123f31ee142950b8789636e80f, type: 3}
   unitIcon: {fileID: 0}
   productionCost: []
   productionTime: 5

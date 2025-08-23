@@ -1,3 +1,4 @@
+// --- ConstructionSite.cs (Güncellenmiş Hali) ---
 using UnityEngine;
 
 public class ConstructionSite : MonoBehaviour
@@ -5,11 +6,22 @@ public class ConstructionSite : MonoBehaviour
     private BuildingData buildingToBuild;
     private float currentBuildTime = 0f;
     private bool isBuilderPresent = false;
-    private MasterBeetleAI assignedBuilder; // SINIF ADI DÜZELTİLDİ
+    private MasterBeetleAI assignedBuilder;
+
+    // YENİ EKLENDİ: GameManager'ın bu bilgileri okuyabilmesi için
+    public BuildingData GetBuildingData() { return buildingToBuild; }
+    public float GetCurrentBuildTime() { return currentBuildTime; }
 
     public void Initialize(BuildingData data)
     {
         buildingToBuild = data;
+    }
+
+    // YENİ EKLENDİ: Kayıttan yüklenen ilerlemeyi ayarlamak için
+    public void LoadProgress(BuildingData data, float time)
+    {
+        buildingToBuild = data;
+        currentBuildTime = time;
     }
 
     private void Update()
@@ -23,8 +35,8 @@ public class ConstructionSite : MonoBehaviour
             }
         }
     }
-
-    // SINIF ADI DÜZELTİLDİ
+    
+    // Diğer fonksiyonlar (StartConstructing, CompleteConstruction) aynı kalacak...
     public void StartConstructing(MasterBeetleAI builder)
     {
         assignedBuilder = builder;

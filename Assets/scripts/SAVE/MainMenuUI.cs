@@ -1,4 +1,7 @@
+// MainMenuUI.cs (Sadeleştirilmiş Hali)
+
 using UnityEngine;
+using UnityEngine.SceneManagement; // Sahne yönetimi için gerekli
 
 public class MainMenuUI : MonoBehaviour
 {
@@ -6,43 +9,20 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private GameObject saveLoadPanel;
     [SerializeField] private GameObject settingsPanel;
 
-    private const string LastUsedSlotKey = "LastUsedSlot";
-
     private void Start()
     {
         BackToMainMenu();
     }
 
-    // "Play" butonu artık bu yeni mantıkla çalışacak
+    // "Play" butonu artık SADECE oyun sahnesini yükleyecek.
+    // Geri kalan her şeyi GameManager halledecek.
     public void OnPlayButton()
     {
-        // 1. "Devam Et" seçeneği var mı?
-        if (PlayerPrefs.HasKey(LastUsedSlotKey))
-        {
-            int lastSlot = PlayerPrefs.GetInt(LastUsedSlotKey);
-            if (SaveSystem.SaveFileExists(lastSlot))
-            {
-                // Evet, var. Direkt o oyuna devam et.
-                GameManager.Instance.ContinueGame(lastSlot);
-                return;
-            }
-        }
-        
-        // 2. "Devam Et" yoksa, HİÇ kayıtlı oyun var mı?
-        if (SaveSystem.DoesAnySaveFileExist())
-        {
-            // Evet, başka kayıtlar var. Oyuncunun seçmesi için menüyü aç.
-            OpenSaveLoadMenu();
-        }
-        else
-        {
-            // Hayır, HİÇ kayıt yok (ilk oynanış). Direkt yeni oyun başlat.
-            // Otomatik olarak 0 numaralı yuvaya yeni bir krallık kur.
-            GameManager.Instance.StartNewGame(0);
-        }
+        // GameManager'daki karmaşık fonksiyonları sildiğimiz için
+        // eski kod hata veriyordu. Şimdi sadece oyun sahnesini yüklüyoruz.
+        SceneManager.LoadScene("OyunSahnesi");
     }
 
-    // "Save" butonu bu fonksiyonu çağıracak
     public void OpenSaveLoadMenu()
     {
         mainMenuPanel.SetActive(false);

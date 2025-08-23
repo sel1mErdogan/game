@@ -86,5 +86,33 @@ namespace InventorySystem
         {
             return colonyStockpile;
         }
+        // YENİ EKLENDİ: Kaydedilmiş veriden envanteri yükler.
+        public void LoadStockpile(List<SerializableItemEntry> savedItems)
+        {
+            // Önce mevcut envanteri tamamen boşalt.
+            colonyStockpile.Clear();
+
+            // Kayıtlı her bir eşya için...
+            foreach (var savedItem in savedItems)
+            {
+                // ItemDatabase'i kullanarak eşyanın isminden ItemData objesini bul.
+                ItemData itemData = ItemDatabase.Instance.FindItemByName(savedItem.itemName);
+
+                if (itemData != null)
+                {
+                    // Eşyayı ve miktarını envantere ekle.
+                    colonyStockpile.Add(itemData, savedItem.amount);
+                }
+                else
+                {
+                    Debug.LogWarning($"Yükleme hatası: '{savedItem.itemName}' isminde bir eşya ItemDatabase'de bulunamadı!");
+                }
+            }
+
+            // Bütün envanter yüklendikten sonra UI'ı güncellemek için event'i tetikle.
+            OnInventoryChanged?.Invoke();
+            Debug.Log("Envanter başarıyla yüklendi.");
+        }
     }
+    
 }

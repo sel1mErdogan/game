@@ -18,8 +18,9 @@ public class D : MonoBehaviour
     // Değişkeni public hale getirdik ki GameManager ona erişebilsin.
     public int CurrentDay = 1;
 
-    private float timeOfDay;
+    public float timeOfDay; // private float timeOfDay; şeklindeydi, public yaptık.
     private bool isNight = false;
+
 
     void Update()
     {
@@ -66,5 +67,9 @@ public class D : MonoBehaviour
         {
             sunLight.color = new Color(0.1f, 0.1f, 0.3f);
         }
+    }
+    public void LoadTimeOfDay(float loadedTime)
+    {
+        this.timeOfDay = loadedTime;
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WorkerBeetle_Data 3
   m_EditorClassIdentifier: 
   unitName: Worker Beetle
-  unitPrefab: {fileID: 159832217244635569, guid: feb025025e37e7c4dbdc6d99c59a28bb, type: 3}
+  unitPrefab: {fileID: 3234251160886454783, guid: c9045c5369331a8438e5d00fe2453136, type: 3}
   unitIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
   productionCost:
   - resource: {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}

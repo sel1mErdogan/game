@@ -26,15 +26,18 @@ public class PopulationUI : MonoBehaviour
         }
     }
 
-    // Bu fonksiyon, ColonyManager'dan "nüfus değişti" haberi geldiğinde otomatik olarak çalışır.
+    // PopulationUI.cs
+
     public void UpdatePopulationText()
     {
         if (populationText != null && ColonyManager.Instance != null)
         {
             int currentPop = ColonyManager.Instance.CurrentPopulation;
             int maxPop = ColonyManager.Instance.MaxPopulation;
-            // Yazıyı "Nüfus: 5 / 10" formatında güncelle
             populationText.text = $"Nüfus: {currentPop} / {maxPop}";
+        
+            // YENİ EKLENDİ: Bu fonksiyonun ne zaman ve hangi değerlerle çalıştığını görelim.
+            Debug.Log($"Population UI güncellendi: {currentPop} / {maxPop}");
         }
     }
 }

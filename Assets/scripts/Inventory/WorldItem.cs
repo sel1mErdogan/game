@@ -1,3 +1,5 @@
+// --- WorldItem.cs (Güncellenmiş Hali) ---
+
 using UnityEngine;
 using InventorySystem;
 
@@ -16,10 +18,13 @@ public class WorldItem : MonoBehaviour
     
     public void Collect()
     {
+        // YENİ EKLENDİ: GameManager'a bu item'ın toplandığını bildir.
+        // Bu satırı daha önce yorum satırı yapmıştık, şimdi geri açıyoruz.
         if (GameManager.Instance != null && !string.IsNullOrEmpty(id))
         {
             GameManager.Instance.NotifyItemCollected(id);
         }
+        
         Destroy(gameObject);
     }
 }
