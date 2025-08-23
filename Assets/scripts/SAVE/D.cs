@@ -8,19 +8,14 @@ public class D : MonoBehaviour
 
     [Header("Işık Ayarları")]
     [SerializeField] private Light sunLight;
-    // ... (Diğer renk ayarların aynı kalacak) ...
-
+    
     [Header("Olaylar (Events)")]
     public UnityEvent OnDayStart;
     public UnityEvent OnNightStart;
 
-    // --- DÜZELTME BURADA ---
-    // Değişkeni public hale getirdik ki GameManager ona erişebilsin.
     public int CurrentDay = 1;
-
-    public float timeOfDay; // private float timeOfDay; şeklindeydi, public yaptık.
+    public float timeOfDay; // Public olmalı
     private bool isNight = false;
-
 
     void Update()
     {
@@ -48,11 +43,16 @@ public class D : MonoBehaviour
         else if (!currentlyIsNight && isNight)
         {
             isNight = false;
-            CurrentDay++; // Yeni gün başladığında sayacı artır
+            CurrentDay++;
             OnDayStart?.Invoke();
+            
+            // YENİ GÜN BAŞLADIĞINDA OTOMATİK KAYIT SİSTEMİNİ TETİKLE
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.Autosave();
+            }
         }
     }
-
     // Bu fonksiyon olduğu gibi kalabilir.
     private void UpdateLighting()
     {

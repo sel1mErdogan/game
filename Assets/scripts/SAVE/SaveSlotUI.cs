@@ -9,6 +9,7 @@ public class SaveSlotUI : MonoBehaviour
     [SerializeField] private GameObject emptySlotView;
     [SerializeField] private TextMeshProUGUI saveNameText;
     [SerializeField] private TextMeshProUGUI lastSavedText;
+    [SerializeField] private RawImage screenshotImage; // Ekran görüntüsü için
     [SerializeField] private Button loadButton;
     [SerializeField] private Button saveButton;
     [SerializeField] private Button newGameButton;
@@ -16,6 +17,7 @@ public class SaveSlotUI : MonoBehaviour
 
     private int slotIndex;
     private SaveLoadMenu parentMenu;
+    private ConfirmationPanelUI confirmationPanel;
 
     private void Awake()
     {
@@ -23,13 +25,14 @@ public class SaveSlotUI : MonoBehaviour
         saveButton.onClick.AddListener(OnSaveClicked);
         newGameButton.onClick.AddListener(OnNewGameClicked);
         deleteButton.onClick.AddListener(OnDeleteClicked);
+
+        confirmationPanel = FindObjectOfType<ConfirmationPanelUI>(true); // Pasif olanı da bul
     }
 
     public void Setup(GameData data, int index, SaveLoadMenu menu)
     {
         slotIndex = index;
         parentMenu = menu;
-
         bool isSlotFull = data != null;
         
         fullSlotView.SetActive(isSlotFull);
@@ -40,26 +43,40 @@ public class SaveSlotUI : MonoBehaviour
         {
             saveNameText.text = data.saveName;
             lastSavedText.text = data.lastSaved;
+            
+            Texture2D screenshot = SaveSystem.LoadScreenshot(index);
+            if (screenshot != null)
+            {
+                screenshotImage.texture = screenshot;
+                screenshotImage.color = Color.white;
+            }
+            else
+            {
+                screenshotImage.color = Color.clear; // Resim yoksa görünmez yap
+            }
+        }
+        else
+        {
+            screenshotImage.color = Color.clear;
         }
         
-        // Ana Menü'de isek, yani oyun sahnesi açık değilse, "Kaydet" butonu tıklanamaz olsun.
         bool isInGameScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "OyunSahnesi";
         saveButton.interactable = isInGameScene && isSlotFull;
     }
 
     private void OnLoadClicked() => GameManager.Instance.LoadGame(slotIndex);
-    
     private void OnSaveClicked() 
     {
-        GameManager.Instance.SaveGame(slotIndex);
-        parentMenu.PopulateSlots(); // Tarih gibi bilgileri güncellemek için menüyü yenile
-    }
-    
+        GameManager.Instance.SaveGame(slotIndex); // Sadece kaydetme komutu verilir.
+        parentMenu.PopulateSlots(); // Hemen menüyü yenilemeye çalışır (bu yüzden gecikme olur).
+    }    
     private void OnNewGameClicked() => GameManager.Instance.StartNewGame(slotIndex);
     
     private void OnDeleteClicked()
     {
-        SaveSystem.Delete(slotIndex);
-        parentMenu.PopulateSlots(); // Silindikten sonra menüyü yenile
+        confirmationPanel.Show($"'{saveNameText.text}' kaydını silmek istediğine emin misin?", () => {
+            SaveSystem.Delete(slotIndex);
+            parentMenu.PopulateSlots();
+        });
     }
 }
