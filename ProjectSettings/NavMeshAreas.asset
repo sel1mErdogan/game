@@ -11,10 +11,10 @@ NavMeshProjectSettings:
     cost: 1
   - name: Jump
     cost: 2
-  - name: 
+  - name: Yol
     cost: 1
-  - name: 
-    cost: 1
+  - name: YasakBolge
+    cost: 1000
   - name: 
     cost: 1
   - name: 

@@ -1,127 +1,115 @@
-using System.Collections;
-using System.Collections.Generic;
-using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using InventorySystem; 
- 
+using Cinemachine;
 
 public class playerMovements : MonoBehaviour
 {
-    // Start is called before the first frame update
-    private PlayerInput playerInput;
+    [Header("Movement Settings")]
+    [Tooltip("Normal yürüme hızı")]
+    [SerializeField] private float walkSpeed = 5f;
+    [Tooltip("Shift'e basılıyken koşma hızı")]
+    [SerializeField] private float runSpeed = 8f;
+    [Tooltip("Karakterin ne kadar yumuşak döneceği. Düşük değer daha yavaş, yüksek değer daha hızlı döner.")]
+    [SerializeField] private float turnSpeed = 15f;
+
+    [Header("References")]
     [SerializeField] private CinemachineVirtualCamera virtualCamer;
-    [SerializeField] private float walkSpeed, runSpeed,turnSpeed;
-    Vector2 movementInput;
-    Vector3 currentMovement, toIso;
-    bool ismovementPressed, isRunPressed;
-    Rigidbody rb;
-    [Header("Inventory Test")]
-    [SerializeField] private List<ItemData> testItems;
+    private Transform mainCameraTransform;
 
+    private PlayerInput playerInput;
+    private Rigidbody rb;
+    private Vector2 movementInput;
+    private bool isRunning;
 
-    [SerializeField] float ZoomAmount;
-    private float minZoom = 1f;
-    private float maxZoom = 6f;
+    // YENİ: Değişkeni buraya taşıdık ki tüm fonksiyonlar erişebilsin
+    private Vector3 moveDirection; 
 
-    float ZoomInput;
-    private void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
+    [Header("Zoom Settings")]
+    [SerializeField] private float zoomAmount = 20f;
+    [SerializeField] private float minZoom = 2f;
+    [SerializeField] private float maxZoom = 10f;
+    private float zoomInput;
 
     private void Awake()
     {
+        rb = GetComponent<Rigidbody>();
+        mainCameraTransform = Camera.main.transform;
+
         playerInput = new PlayerInput();
-        playerInput.PlayerController.Movement.started += OnMove;
-        playerInput.PlayerController.Movement.performed += OnMove;
-        playerInput.PlayerController.Movement.canceled += OnMove;
-
-        playerInput.PlayerController.RUN.started += OnRun;
-        playerInput.PlayerController.RUN.canceled += OnRun;
-
-        playerInput.CameraController.Zoom.performed += OnZoom;
-
+        playerInput.PlayerController.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
+        playerInput.PlayerController.Movement.canceled += ctx => movementInput = Vector2.zero;
+        playerInput.PlayerController.RUN.performed += ctx => isRunning = true;
+        playerInput.PlayerController.RUN.canceled += ctx => isRunning = false;
+        playerInput.CameraController.Zoom.performed += ctx => zoomInput = ctx.ReadValue<float>();
     }
-    private void OnMove(InputAction.CallbackContext context)
-    {
-        movementInput = context.ReadValue<Vector2>();
-        currentMovement.x = movementInput.x;
-        currentMovement.z = movementInput.y;
-        ismovementPressed = movementInput.x != 0 || movementInput.y != 0;
-    }
-    private void OnRun(InputAction.CallbackContext context)
-    {
-        isRunPressed = context.ReadValueAsButton();
-    }
+
     private void FixedUpdate()
     {
-        PlayerMove();
+        // Önce yönü hesapla, sonra bu yöne göre hareketi ve dönüşü yap
+        CalculateMoveDirection();
+        HandleMovement();
+        HandleRotation();
     }
-    private void Update()
-    {
-        RotationProcess();
+    
+    private void LateUpdate() 
+    { 
+        HandleZoom(); 
     }
-     private void OnZoom(InputAction.CallbackContext context)
-    {
-        ZoomInput = context.ReadValue<float>();
-    }
-    private void LateUpdate()
-    {
-        ZoomProcress();
-    }
-    private void ZoomProcress()
-    {
-        if (virtualCamer == null)
-        {
-            // Eğer atanmamışsa, hiçbir şey yapma ve fonksiyondan çık.
-            // Hata vermemesi için konsola bir uyarı da yazdırabilirsin.
-            Debug.LogWarning("Virtual Camera atanmamış, zoom çalışmıyor.");
-            return;
-        }
 
-        if (ZoomInput > 0)
-        {
-            virtualCamer.m_Lens.OrthographicSize -= ZoomAmount * Time.deltaTime;
-        }
-        else if (ZoomInput < 0)
-        {
-            virtualCamer.m_Lens.OrthographicSize += ZoomAmount * Time.deltaTime;
-        }
-        virtualCamer.m_Lens.OrthographicSize = Mathf.Clamp(virtualCamer.m_Lens.OrthographicSize, minZoom, maxZoom);
-
-    }
-    private void PlayerMove()
+    private void CalculateMoveDirection()
     {
-        if (!isRunPressed)
-        {
-            rb.MovePosition(transform.position + toIso * currentMovement.normalized.magnitude * walkSpeed * Time.deltaTime);
-        }
-        else
-        {
-            rb.MovePosition(transform.position + currentMovement.normalized * runSpeed * Time.deltaTime);
-
-        }
-    }
-    private void RotationProcess()
-    {
-        if (!ismovementPressed) return;
-        Quaternion isoAnlge = Quaternion.Euler(0,45,0);
-        Matrix4x4 isoMatrix = Matrix4x4.Rotate(isoAnlge);
-        toIso = isoMatrix.MultiplyPoint3x4(currentMovement);
+        // Kameranın ileri ve sağ yönlerini al, dikey ekseni sıfırla
+        Vector3 cameraForward = mainCameraTransform.forward;
+        Vector3 cameraRight = mainCameraTransform.right;
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
         
-        Quaternion targerRotation = Quaternion.LookRotation(toIso, Vector3.up);
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targerRotation, turnSpeed * Time.deltaTime);
-     }
-   private void OnEnable()
-    {
-        playerInput.PlayerController.Enable();
-        playerInput.CameraController.Enable();
+        // Kullanıcı girdisiyle bu yönleri birleştirerek nihai hareket yönünü bul
+        moveDirection = (cameraForward * movementInput.y + cameraRight * movementInput.x);
     }
-    private void OnDisable()
-    {
-        playerInput.PlayerController.Disable();
-        playerInput.CameraController.Disable();
 
+    private void HandleMovement()
+    {
+        float currentSpeed = isRunning ? runSpeed : walkSpeed;
+        
+        // Hareketi uygula
+        Vector3 targetVelocity = moveDirection * currentSpeed;
+        targetVelocity.y = rb.velocity.y; // Düşme/zıplama hızını koru
+        rb.velocity = targetVelocity;
+    }
+
+    private void HandleRotation()
+    {
+        // Sadece hareket girdisi varsa dön
+        if (moveDirection.magnitude > 0.1f)
+        {
+            // Bakacağı yön, hareket yönüdür
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            
+            // Rigidbody'nin rotasyonunu yumuşak bir şekilde değiştir
+            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * turnSpeed);
+        }
+    }
+    
+    private void HandleZoom()
+    {
+        if (virtualCamer == null) return;
+        
+        float newSize = virtualCamer.m_Lens.OrthographicSize - zoomInput * zoomAmount * Time.deltaTime;
+        virtualCamer.m_Lens.OrthographicSize = Mathf.Clamp(newSize, minZoom, maxZoom);
+    }
+
+    private void OnEnable() 
+    { 
+        playerInput.PlayerController.Enable(); 
+        playerInput.CameraController.Enable(); 
+    }
+
+    private void OnDisable() 
+    { 
+        playerInput.PlayerController.Disable(); 
+        playerInput.CameraController.Disable(); 
     }
 }
