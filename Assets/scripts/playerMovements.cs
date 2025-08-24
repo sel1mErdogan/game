@@ -5,24 +5,17 @@ using Cinemachine;
 public class playerMovements : MonoBehaviour
 {
     [Header("Movement Settings")]
-    [Tooltip("Normal yürüme hızı")]
     [SerializeField] private float walkSpeed = 5f;
-    [Tooltip("Shift'e basılıyken koşma hızı")]
     [SerializeField] private float runSpeed = 8f;
-    [Tooltip("Karakterin ne kadar yumuşak döneceği. Düşük değer daha yavaş, yüksek değer daha hızlı döner.")]
-    [SerializeField] private float turnSpeed = 15f;
+    [SerializeField] private float turnSpeed = 20f; // Dönüşleri biraz daha yumuşattık
 
     [Header("References")]
     [SerializeField] private CinemachineVirtualCamera virtualCamer;
-    private Transform mainCameraTransform;
 
     private PlayerInput playerInput;
     private Rigidbody rb;
     private Vector2 movementInput;
     private bool isRunning;
-
-    // YENİ: Değişkeni buraya taşıdık ki tüm fonksiyonlar erişebilsin
-    private Vector3 moveDirection; 
 
     [Header("Zoom Settings")]
     [SerializeField] private float zoomAmount = 20f;
@@ -33,7 +26,6 @@ public class playerMovements : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        mainCameraTransform = Camera.main.transform;
 
         playerInput = new PlayerInput();
         playerInput.PlayerController.Movement.performed += ctx => movementInput = ctx.ReadValue<Vector2>();
@@ -45,10 +37,17 @@ public class playerMovements : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Önce yönü hesapla, sonra bu yöne göre hareketi ve dönüşü yap
-        CalculateMoveDirection();
-        HandleMovement();
-        HandleRotation();
+        // 1. Kullanıcı girdisinden temel hareket yönünü al (yukarı/aşağı, sağ/sol)
+        Vector3 moveInput = new Vector3(movementInput.x, 0, movementInput.y);
+
+        // 2. Bu yönü, izometrik kameranın 45 derecelik açısına göre DÖNDÜR
+        Vector3 moveDirection = Quaternion.Euler(0, 45, 0) * moveInput;
+
+        // 3. Hareketi uygula
+        HandleMovement(moveDirection);
+        
+        // 4. Dönüşü uygula
+        HandleRotation(moveDirection);
     }
     
     private void LateUpdate() 
@@ -56,39 +55,20 @@ public class playerMovements : MonoBehaviour
         HandleZoom(); 
     }
 
-    private void CalculateMoveDirection()
-    {
-        // Kameranın ileri ve sağ yönlerini al, dikey ekseni sıfırla
-        Vector3 cameraForward = mainCameraTransform.forward;
-        Vector3 cameraRight = mainCameraTransform.right;
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-        
-        // Kullanıcı girdisiyle bu yönleri birleştirerek nihai hareket yönünü bul
-        moveDirection = (cameraForward * movementInput.y + cameraRight * movementInput.x);
-    }
-
-    private void HandleMovement()
+    private void HandleMovement(Vector3 moveDirection)
     {
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
-        
-        // Hareketi uygula
-        Vector3 targetVelocity = moveDirection * currentSpeed;
-        targetVelocity.y = rb.velocity.y; // Düşme/zıplama hızını koru
+        Vector3 targetVelocity = moveDirection.normalized * currentSpeed;
+        targetVelocity.y = rb.velocity.y;
         rb.velocity = targetVelocity;
     }
 
-    private void HandleRotation()
+    private void HandleRotation(Vector3 moveDirection)
     {
         // Sadece hareket girdisi varsa dön
         if (moveDirection.magnitude > 0.1f)
         {
-            // Bakacağı yön, hareket yönüdür
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-            
-            // Rigidbody'nin rotasyonunu yumuşak bir şekilde değiştir
             rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, Time.fixedDeltaTime * turnSpeed);
         }
     }
@@ -96,20 +76,10 @@ public class playerMovements : MonoBehaviour
     private void HandleZoom()
     {
         if (virtualCamer == null) return;
-        
         float newSize = virtualCamer.m_Lens.OrthographicSize - zoomInput * zoomAmount * Time.deltaTime;
         virtualCamer.m_Lens.OrthographicSize = Mathf.Clamp(newSize, minZoom, maxZoom);
     }
 
-    private void OnEnable() 
-    { 
-        playerInput.PlayerController.Enable(); 
-        playerInput.CameraController.Enable(); 
-    }
-
-    private void OnDisable() 
-    { 
-        playerInput.PlayerController.Disable(); 
-        playerInput.CameraController.Disable(); 
-    }
+    private void OnEnable() { playerInput.PlayerController.Enable(); playerInput.CameraController.Enable(); }
+    private void OnDisable() { playerInput.PlayerController.Disable(); playerInput.CameraController.Disable(); }
 }
