@@ -611,38 +611,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 2ec4020477503ad4eb07de6f52069e91, type: 2}
   - {fileID: 11400000, guid: f2dc100bb2abfb34fbd149593cdd122a, type: 2}
   - {fileID: 11400000, guid: 7c17016e612837546af29dee42311aab, type: 2}
---- !u!1 &96505319
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 96505320}
-  m_Layer: 0
-  m_Name: Camera Arm
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &96505320
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 96505319}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 355159552}
-  m_Father: {fileID: 1143844473}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &101230546
 GameObject:
   m_ObjectHideFlags: 0
@@ -1212,13 +1180,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 355159550}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.23911762, y: -0.3696438, z: 0.09904576, w: 0.8923992}
-  m_LocalPosition: {x: 6.1237297, y: 5, z: -6.123728}
+  m_LocalRotation: {x: 0.23911761, y: 0.36964387, z: -0.09904575, w: 0.8923991}
+  m_LocalPosition: {x: 4.4762707, y: 5.5, z: -3.2237296}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1288160861}
-  m_Father: {fileID: 96505320}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 30, y: 45, z: 0}
 --- !u!1 &363995840
 GameObject:
@@ -4168,7 +4136,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 755147970}
-  - {fileID: 96505320}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &1143844474
@@ -4186,12 +4153,6 @@ MonoBehaviour:
   walkSpeed: 12
   runSpeed: 17
   turnSpeed: 5
-  cameraFollowSpeed: 5
-  cameraArm: {fileID: 96505320}
-  virtualCamer: {fileID: 355159551}
-  zoomAmount: 8
-  minZoom: 2
-  maxZoom: 15
 --- !u!54 &1143844475
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -10707,6 +10668,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 705507995}
   - {fileID: 2030017878}
+  - {fileID: 355159552}
   - {fileID: 1143844473}
   - {fileID: 963194228}
   - {fileID: 86421444}
