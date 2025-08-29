@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da77e909f03b03848bbd147dd21383e8, type: 3}
+  m_Name: USTA_MIMAR_1_Aletler
+  m_EditorClassIdentifier: 
+  upgradeName: "Geli\u015Fmi\u015F Aletler"
+  description: "Usta b\xF6ce\u011Fin in\u015Faat h\u0131z\u0131n\u0131 %15 art\u0131r\u0131r.
+    (Kodlama gerektirir)"
+  icon: {fileID: 0}
+  cost:
+  - resource: {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
+    amount: 40
+  - resource: {fileID: 11400000, guid: a8d3c6f73b7cdca4aa68aaa0c5e70123, type: 2}
+    amount: 10
+  requiredUpgrade: {fileID: 0}
+  effectType: 2
+  effectValue: 0.15

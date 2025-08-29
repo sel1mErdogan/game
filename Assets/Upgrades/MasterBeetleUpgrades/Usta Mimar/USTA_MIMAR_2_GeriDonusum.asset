@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da77e909f03b03848bbd147dd21383e8, type: 3}
+  m_Name: USTA_MIMAR_2_GeriDonusum
+  m_EditorClassIdentifier: 
+  upgradeName: "Malzeme Geri D\xF6n\xFC\u015F\xFCm\xFC"
+  description: "Bir bina in\u015Faat\u0131 tamamland\u0131\u011F\u0131nda, maliyetinin
+    %10'u iade edilir. (Kodlama gerektirir)\n\n"
+  icon: {fileID: 0}
+  cost:
+  - resource: {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
+    amount: 75
+  - resource: {fileID: 11400000, guid: 1bffb4b6e488fe741bdd53ba6fe1c63c, type: 2}
+    amount: 15
+  requiredUpgrade: {fileID: 11400000, guid: 90755d363ef35744fafeaf0c4e467ecf, type: 2}
+  effectType: 0
+  effectValue: 0.1

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da77e909f03b03848bbd147dd21383e8, type: 3}
+  m_Name: SAVASCI_SUIKASTCI_2_KritikVurus
+  m_EditorClassIdentifier: 
+  upgradeName: "Kritik Vuru\u015F"
+  description: "Sald\u0131r\u0131lar\u0131n\u0131n %10 \u015Fansla \xE7ift hasar
+    verme ihtimali olur. (Kodlama gerektirir)"
+  icon: {fileID: 0}
+  cost:
+  - resource: {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
+    amount: 50
+  - resource: {fileID: 11400000, guid: da2f1b89e4b3ddd4185ce1f65cfc18f9, type: 2}
+    amount: 5
+  requiredUpgrade: {fileID: 11400000, guid: a75541fa1f9da3a4b93b393af044b7fe, type: 2}
+  effectType: 0
+  effectValue: 0.1

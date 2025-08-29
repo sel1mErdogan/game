@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da77e909f03b03848bbd147dd21383e8, type: 3}
+  m_Name: USTA_TAMIRCI_2_Onarim
+  m_EditorClassIdentifier: 
+  upgradeName: "Onar\u0131m Protokolleri"
+  description: "Usta b\xF6ce\u011Fe, hasar g\xF6rm\xFC\u015F binalar\u0131 zamanla
+    tamir etme yetene\u011Fi kazand\u0131r\u0131r. (Kodlama gerektirir)"
+  icon: {fileID: 0}
+  cost:
+  - resource: {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
+    amount: 80
+  - resource: {fileID: 11400000, guid: 0e032a6fc8f734742bf36657eba16a10, type: 2}
+    amount: 10
+  requiredUpgrade: {fileID: 11400000, guid: adcd78947edfd6a48b0a1562826a7675, type: 2}
+  effectType: 0
+  effectValue: 1
