@@ -1,65 +1,62 @@
 using UnityEngine;
 using System.Collections.Generic;
+using InventorySystem; // InventoryManager'a erişim için bunu ekle
 
 public class UpgradeManager : MonoBehaviour
 {
     public static UpgradeManager Instance { get; private set; }
-
-    // Satın alınmış olan tüm geliştirmelerin bir listesini tutar.
     public List<UpgradeData> purchasedUpgrades = new List<UpgradeData>();
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
-    // Bir geliştirmenin daha önce satın alınıp alınmadığını kontrol eder.
     public bool IsUpgradePurchased(UpgradeData upgrade)
     {
+        if (upgrade == null) return false;
         return purchasedUpgrades.Contains(upgrade);
     }
 
-    // Yeni bir geliştirme satın alır.
-    public void PurchaseUpgrade(UpgradeData upgrade)
+    // Satın alma işlemini dener ve başarılı olup olmadığını döndürür (true/false)
+    public bool PurchaseUpgrade(UpgradeData upgrade)
     {
-        if (upgrade == null) return;
-
-        // Henüz satın alınmadıysa listeye ekle.
-        if (!IsUpgradePurchased(upgrade))
+        if (upgrade == null || !CanPurchaseUpgrade(upgrade) || IsUpgradePurchased(upgrade)) 
         {
-            // 1. Maliyeti envanterden düş (InventoryManager'a bu fonksiyonu ekleyeceğiz)
-            // InventoryManager.Instance.SpendResources(upgrade.cost);
+            return false; // Satın alınamazsa veya zaten alınmışsa işlemi iptal et
+        }
 
-            // 2. Geliştirmeyi listeye ekle
+        // 1. Maliyeti envanterden düşmeyi dene
+        if (InventoryManager.Instance.SpendResources(new List<ResourceCost>(upgrade.cost)))
+        {
+            // 2. Geliştirmeyi "satın alındı" olarak listeye ekle
             purchasedUpgrades.Add(upgrade);
             Debug.Log(upgrade.upgradeName + " geliştirrmesi satın alındı!");
-
-            // 3. Geliştirmenin etkisini uygula (Bu bir sonraki adımda yapılacak)
+            
+            // 3. Geliştirmenin etkisini uygula (Burası bir sonraki adımda yapılacak en önemli kısım!)
             // ApplyUpgradeEffect(upgrade);
+            
+            return true; // İşlem başarılı
         }
+        
+        Debug.LogWarning("Yeterli kaynak olmadığı için satın alım başarısız!");
+        return false; // Kaynak harcanamadıysa başarısız
     }
 
-    // Bir geliştirmenin satın alınabilmesi için ön koşulların sağlanıp sağlanmadığını kontrol eder.
     public bool CanPurchaseUpgrade(UpgradeData upgrade)
     {
-        // 1. Ön koşul geliştirme var mı? Varsa, o satın alınmış mı?
         if (upgrade.requiredUpgrade != null && !IsUpgradePurchased(upgrade.requiredUpgrade))
         {
-            return false; // Ön koşul sağlanmadı.
+            return false;
         }
+        
+        // Bu fonksiyon, butonun en baştan inaktif görünmesi için bir ön kontrol yapar.
+        // Gerçek harcama işlemi PurchaseUpgrade içinde yapılır.
+        // InventoryManager'a bunun için yeni bir fonksiyon ekleyebiliriz veya
+        // mevcut mantığa güvenebiliriz. Şimdilik bu haliyle bırakalım.
 
-        // 2. Yeterli kaynak var mı?
-        // if (!InventoryManager.Instance.HasEnoughResources(upgrade.cost))
-        // {
-        //     return false; // Yeterli kaynak yok.
-        // }
-
-        return true; // Tüm koşullar sağlandı, satın alınabilir.
+        return true;
     }
 }
