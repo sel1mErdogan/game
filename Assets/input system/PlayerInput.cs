@@ -53,6 +53,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Fire"",
+                    ""type"": ""Button"",
+                    ""id"": ""ef5bf5c4-3d32-4582-b2ce-46348b340c5f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -176,6 +185,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""New action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""34354b8c-d728-443a-b8ea-4110315667de"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -215,6 +235,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_PlayerController_Movement = m_PlayerController.FindAction("Movement", throwIfNotFound: true);
         m_PlayerController_RUN = m_PlayerController.FindAction("RUN", throwIfNotFound: true);
         m_PlayerController_Newaction = m_PlayerController.FindAction("New action", throwIfNotFound: true);
+        m_PlayerController_Fire = m_PlayerController.FindAction("Fire", throwIfNotFound: true);
         // CameraController
         m_CameraController = asset.FindActionMap("CameraController", throwIfNotFound: true);
         m_CameraController_Zoom = m_CameraController.FindAction("Zoom", throwIfNotFound: true);
@@ -288,6 +309,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerController_Movement;
     private readonly InputAction m_PlayerController_RUN;
     private readonly InputAction m_PlayerController_Newaction;
+    private readonly InputAction m_PlayerController_Fire;
     public struct PlayerControllerActions
     {
         private @PlayerInput m_Wrapper;
@@ -295,6 +317,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_PlayerController_Movement;
         public InputAction @RUN => m_Wrapper.m_PlayerController_RUN;
         public InputAction @Newaction => m_Wrapper.m_PlayerController_Newaction;
+        public InputAction @Fire => m_Wrapper.m_PlayerController_Fire;
         public InputActionMap Get() { return m_Wrapper.m_PlayerController; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -313,6 +336,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Newaction.started += instance.OnNewaction;
             @Newaction.performed += instance.OnNewaction;
             @Newaction.canceled += instance.OnNewaction;
+            @Fire.started += instance.OnFire;
+            @Fire.performed += instance.OnFire;
+            @Fire.canceled += instance.OnFire;
         }
 
         private void UnregisterCallbacks(IPlayerControllerActions instance)
@@ -326,6 +352,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Newaction.started -= instance.OnNewaction;
             @Newaction.performed -= instance.OnNewaction;
             @Newaction.canceled -= instance.OnNewaction;
+            @Fire.started -= instance.OnFire;
+            @Fire.performed -= instance.OnFire;
+            @Fire.canceled -= instance.OnFire;
         }
 
         public void RemoveCallbacks(IPlayerControllerActions instance)
@@ -394,6 +423,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnRUN(InputAction.CallbackContext context);
         void OnNewaction(InputAction.CallbackContext context);
+        void OnFire(InputAction.CallbackContext context);
     }
     public interface ICameraControllerActions
     {

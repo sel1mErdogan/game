@@ -80,4 +80,13 @@ public class CanSistemi : MonoBehaviour
         
         Destroy(gameObject);
     }
+    // ... Ol() fonksiyonunun altına ...
+
+    public void IncreaseMaxHealth(int amount)
+    {
+        maxCan += amount;
+        mevcutCan += amount; // Maksimum can artarken mevcut canı da artıralım
+        UpdateHealthBar();
+        Debug.Log(gameObject.name + " canı " + amount + " kadar arttı! Yeni Max Can: " + maxCan);
+    }
 }

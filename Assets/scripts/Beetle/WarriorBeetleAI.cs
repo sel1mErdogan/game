@@ -142,4 +142,16 @@ public class WarriorBeetleAI : MonoBehaviour
         currentState = newState;
         agent.isStopped = false;
     }
+    public void IncreaseDamage(int amount)
+    {
+        attackDamage += amount;
+        Debug.Log(gameObject.name + " hasarı " + amount + " kadar arttı! Yeni Hasar: " + attackDamage);
+    }
+
+    public void DecreaseAttackCooldown(float amount)
+    {
+        attackCooldown -= amount;
+        if (attackCooldown < 0.1f) attackCooldown = 0.1f; // Çok hızlanmasını önle
+        Debug.Log(gameObject.name + " saldırı bekleme süresi " + amount + " kadar azaldı! Yeni Süre: " + attackCooldown);
+    }
 }

@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 7498642953486472845}
   - component: {fileID: 5619985212363867627}
   - component: {fileID: 4456627520932273750}
+  - component: {fileID: 3884806342447250412}
+  - component: {fileID: 357844106488931023}
   m_Layer: 6
   m_Name: explorer
   m_TagString: Beetle
@@ -125,6 +127,7 @@ MonoBehaviour:
   beetleType: 1
   collectRadius: 2
   maxInventorySize: 5
+  individualUpgrades: []
 --- !u!195 &4035853333872697643
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -209,3 +212,35 @@ MonoBehaviour:
   populationCost: 1
   healthBarPrefab: {fileID: 2829359478558566542, guid: a05c3cd1bb286aa4a9f5aa3c7c00102a, type: 3}
   healthBarOffset: {x: 0, y: 2, z: 0}
+--- !u!114 &3884806342447250412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223103233990067536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4057cf8d913390448ab00a95f6eb7238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  experience: {fileID: 357844106488931023}
+  beetle: {fileID: 202707865986448277}
+  possibleUpgrades:
+  - {fileID: 11400000, guid: d26659980eda84c4d8e890d3c0c9027b, type: 2}
+--- !u!114 &357844106488931023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223103233990067536}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a4ba2010c2c1754fb00335c8eb7c7fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 1
+  currentXP: 0
+  xpToNextLevel: 100
+  xpMultiplier: 1.5

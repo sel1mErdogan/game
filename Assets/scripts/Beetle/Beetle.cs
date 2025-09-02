@@ -10,40 +10,40 @@ namespace KingdomBug
         [SerializeField] private float collectRadius = 2f;
         [SerializeField] private int maxInventorySize = 5;
         
+        // --- YENİ EKLENENLER ---
+        public List<UpgradeData> individualUpgrades = new List<UpgradeData>();
+        // --- BİTTİ ---
+
         private Dictionary<ItemData, int> beetleInventory = new Dictionary<ItemData, int>();
         
+        // --- AWAKE ve ONTRIGGERENTER OLDUĞU GİBİ KALIYOR ---
         private void Awake()
         {
-            // Böceğin toplama yapabilmesi için bir trigger collider'a ihtiyacı var.
-            var triggerCollider = gameObject.AddComponent<SphereCollider>();
-            triggerCollider.radius = collectRadius;
-            triggerCollider.isTrigger = true;
+            if (GetComponent<SphereCollider>() == null)
+            {
+                var triggerCollider = gameObject.AddComponent<SphereCollider>();
+                triggerCollider.radius = collectRadius;
+                triggerCollider.isTrigger = true;
+            }
         }
-        
-        // Bu fonksiyon, böcek bir item'ın üzerine geldiğinde otomatik çalışır.
         private void OnTriggerEnter(Collider other)
         {
             WorldItem worldItem = other.GetComponent<WorldItem>();
-            
             if (worldItem != null && CanCollectItem(worldItem.GetItemData()) && !IsInventoryFull())
             {
                 ItemData itemData = worldItem.GetItemData();
                 int quantity = worldItem.GetQuantity();
-                
-                if (beetleInventory.ContainsKey(itemData))
-                {
-                    beetleInventory[itemData] += quantity;
-                }
-                else
-                {
-                    beetleInventory.Add(itemData, quantity);
-                }
-                
-                // Item toplandıktan sonra dünyadan silinir.
+                if (beetleInventory.ContainsKey(itemData)) { beetleInventory[itemData] += quantity; }
+                else { beetleInventory.Add(itemData, quantity); }
                 worldItem.Collect();
             }
         }
         
+        // --- YENİ EKLENEN FONKSİYONLAR ---
+        public bool HasUpgrade(UpgradeData upgrade) => individualUpgrades.Contains(upgrade);
+        public void AddUpgrade(UpgradeData upgrade) { if (!HasUpgrade(upgrade)) individualUpgrades.Add(upgrade); }
+        public void IncreaseInventorySize(int amount) { maxInventorySize += amount; }
+        // --- BİTTİ ---
         public bool CanCollectItem(ItemData itemData)
         {
             // itemData'nın null olma ihtimaline karşı kontrol.

@@ -6,10 +6,12 @@ using InventorySystem;
 [RequireComponent(typeof(NavMeshAgent), typeof(Beetle))]
 public class WorkerBeetleAI : MonoBehaviour
 {
+    // YENİ DURUM EKLENDİ: Üsse item teslim etme durumu
     private enum State
     {
         WanderingOnRoute,
-        DetouringForResource
+        DetouringForResource,
+        ReturningToBase // <<< YENİ
     }
 
     [Header("Yapay Zeka Ayarları")]
@@ -30,9 +32,6 @@ public class WorkerBeetleAI : MonoBehaviour
     private Vector3 routeDestination;
     private Transform targetResource;
     private float lastScanTime;
-    
-    private float collectionTimer;
-    private const float MAX_COLLECTION_TIME = 120f;
 
     void Start()
     {
@@ -46,7 +45,6 @@ public class WorkerBeetleAI : MonoBehaviour
         }
         else
         {
-            // Bu kritik bir hata olduğu için bu log mesajı kalmalıdır.
             Debug.LogError("Sahne'de 'ColonyBase' tag'ine sahip bir Üs objesi bulunamadı! Böcekler üslerini bulamıyor.", this);
         }
 
@@ -56,12 +54,10 @@ public class WorkerBeetleAI : MonoBehaviour
 
     void Update()
     {
-        collectionTimer += Time.deltaTime;
-
-        if (collectionTimer >= MAX_COLLECTION_TIME && beetle.HasItems())
+        // GÜNCELLENDİ: Envanter dolduğunda direkt üsse dönmesini sağlıyoruz.
+        if (beetle.IsInventoryFull() && currentState != State.ReturningToBase)
         {
             ReturnToBase();
-            return;
         }
 
         switch (currentState)
@@ -71,6 +67,10 @@ public class WorkerBeetleAI : MonoBehaviour
                 break;
             case State.DetouringForResource:
                 HandleDetourState();
+                break;
+            // YENİ DURUM KONTROLÜ
+            case State.ReturningToBase:
+                HandleReturningToBaseState(); // <<< YENİ
                 break;
         }
     }
@@ -109,12 +109,44 @@ public class WorkerBeetleAI : MonoBehaviour
             agent.SetDestination(targetResource.position);
         }
     }
+    
+    // YENİ FONKSİYON: Üsse dönüş durumunu yönetir
+    private void HandleReturningToBaseState()
+    {
+        // Eğer üsse yeterince yaklaştıysa...
+        if (!agent.pathPending && agent.remainingDistance < 2.5f)
+        {
+            DepositItemsAtBase();
+        }
+    }
+
+    // YENİ FONKSİYON: Item'ları üsse bırakır ve XP kazanır
+    private void DepositItemsAtBase()
+    {
+        var items = beetle.EmptyInventory(); // Böceğin envanterini boşalt ve item'ları al
+        int deliveredItemCount = items.Count;
+
+        // Her bir item'ı ana envantere ekle
+        foreach (var itemEntry in items)
+        {
+            InventoryManager.Instance.AddItem(itemEntry.Key, itemEntry.Value);
+        }
+        
+        // Teslimat yaptığı için XP kazan
+        if (deliveredItemCount > 0)
+        {
+            GetComponent<BeetleExperience>()?.AddXP(15 * deliveredItemCount);
+        }
+        
+        // İş bitti, tekrar gezinmeye başla
+        ResumeRoute();
+    }
 
     private void ResumeRoute()
     {
         currentState = State.WanderingOnRoute;
         targetResource = null;
-        agent.SetDestination(routeDestination);
+        SetNewRouteDestination(); // Yeni bir hedef belirle
     }
 
     private void SetNewRouteDestination()
@@ -132,7 +164,7 @@ public class WorkerBeetleAI : MonoBehaviour
 
     private void ReturnToBase()
     {
-        collectionTimer = 0f; 
+        currentState = State.ReturningToBase;
         agent.SetDestination(colonyBase.position);
     }
 

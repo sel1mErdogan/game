@@ -17,6 +17,8 @@ GameObject:
   - component: {fileID: 3824382274068307112}
   - component: {fileID: 8821716132807058483}
   - component: {fileID: 8577097034183944987}
+  - component: {fileID: -3037225720913434722}
+  - component: {fileID: 1036175400995322111}
   m_Layer: 6
   m_Name: worker
   m_TagString: Beetle
@@ -104,7 +106,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -125,6 +127,7 @@ MonoBehaviour:
   beetleType: 0
   collectRadius: 2
   maxInventorySize: 5
+  individualUpgrades: []
 --- !u!195 &4131492744967494982
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -209,3 +212,38 @@ MonoBehaviour:
   populationCost: 1
   healthBarPrefab: {fileID: 2829359478558566542, guid: a05c3cd1bb286aa4a9f5aa3c7c00102a, type: 3}
   healthBarOffset: {x: 0, y: 2, z: 0}
+--- !u!114 &-3037225720913434722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3234251160886454783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4057cf8d913390448ab00a95f6eb7238, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  experience: {fileID: 1036175400995322111}
+  beetle: {fileID: 321945178088275253}
+  possibleUpgrades:
+  - {fileID: 11400000, guid: 4af42929cedbc4c439502b2626c688f0, type: 2}
+  - {fileID: 11400000, guid: 2c501bdb93b635c4f8ed3eff9d4b4490, type: 2}
+  - {fileID: 11400000, guid: 409a5b6c82137c04abd2a56e7545645b, type: 2}
+  requestIconPrefab: {fileID: 0}
+--- !u!114 &1036175400995322111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3234251160886454783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a4ba2010c2c1754fb00335c8eb7c7fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 1
+  currentXP: 0
+  xpToNextLevel: 100
+  xpMultiplier: 1.5
