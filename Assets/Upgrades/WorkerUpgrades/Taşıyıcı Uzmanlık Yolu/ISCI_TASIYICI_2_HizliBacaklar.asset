@@ -18,7 +18,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   cost:
   - resource: {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
-    amount: 30
+    amount: 5
   - resource: {fileID: 11400000, guid: 1bffb4b6e488fe741bdd53ba6fe1c63c, type: 2}
     amount: 5
   requiredUpgrade: {fileID: 0}

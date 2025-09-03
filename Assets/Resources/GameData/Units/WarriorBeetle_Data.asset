@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d04bd3339cb84cb46b82f654de9b308a, type: 3}
   m_Name: WarriorBeetle_Data
   m_EditorClassIdentifier: 
-  unitName: 
-  unitPrefab: {fileID: 0}
-  unitIcon: {fileID: 0}
-  productionCost: []
+  unitName: Warrior Beetle
+  unitPrefab: {fileID: 3209729530559923836, guid: fda983a7e6c6a1040995700757c3c586, type: 3}
+  unitIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  productionCost:
+  - resource: {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
+    amount: 3
   productionTime: 5
   populationCost: 1

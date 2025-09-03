@@ -15,7 +15,25 @@ namespace KingdomBug
         // --- BİTTİ ---
 
         private Dictionary<ItemData, int> beetleInventory = new Dictionary<ItemData, int>();
-        
+        // Beetle.cs script'inin içine, Awake() fonksiyonunun üstüne veya altına ekle
+
+        private void Start()
+        {
+            // Doğduğumda kendimi ColonyManager'a kaydettiriyorum.
+            if(ColonyManager.Instance != null)
+            {
+                ColonyManager.Instance.RegisterBeetle(this);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            // Ölürken kendimi ColonyManager'dan sildiriyorum.
+            if (ColonyManager.Instance != null)
+            {
+                ColonyManager.Instance.UnregisterBeetle(this);
+            }
+        }
         // --- AWAKE ve ONTRIGGERENTER OLDUĞU GİBİ KALIYOR ---
         private void Awake()
         {

@@ -66,26 +66,42 @@ public class ColonyUpgradesUI : MonoBehaviour
         FilterAndDisplayBugs(BeetleType.Worker);
     }
 
+    // ColonyUpgradesUI.cs script'inin içindeki fonksiyon
+
     private void FilterAndDisplayBugs(BeetleType type)
     {
+        // --- EKLENECEK OLAN TEK SATIR BURASI ---
+        detayPaneli.gameObject.SetActive(false); // Sekme değiştiğinde detay panelini kapat.
+        // --- ---
+
+        // Önce listedeki eski butonları temizle
         foreach (Transform child in contentParent)
         {
             Destroy(child.gameObject);
         }
 
-        List<Beetle> filteredBeetles = allBeetles.Where(b => b.GetBeetleType() == type).ToList();
+        // Geri kalan kodlar aynı...
+        List<Beetle> filteredBeetles = ColonyManager.Instance.AllBeetles.Where(b => b.GetBeetleType() == type).ToList();
 
         foreach (Beetle beetle in filteredBeetles)
         {
             GameObject buttonObj = Instantiate(böcekButonPrefab, contentParent);
             BugListButton bugButton = buttonObj.GetComponent<BugListButton>();
-            bugButton.Setup(beetle, this);
+            if (bugButton != null)
+            {
+                bugButton.Setup(beetle, this);
+            }
         }
     }
+
+    // ColonyUpgradesUI.cs içindeki OnBugSelected fonksiyonunun DOĞRU hali
 
     public void OnBugSelected(Beetle beetle)
     {
         Debug.Log(beetle.name + " seçildi! Detay paneli dolduruluyor...");
+        
+        // Detay Paneline sadece ve sadece seçilen böceği gönderiyoruz.
+        // Başka hiçbir bilgiye gerek yok.
         detayPaneli.ShowPanelForBeetle(beetle);
     }
 }
