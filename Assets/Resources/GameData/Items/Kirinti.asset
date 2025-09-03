@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Kirinti
   m_EditorClassIdentifier: 
   itemName: Kirinti
-  itemIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: d2b6fbeeb06c8634481c0c54f59d9a75, type: 3}
+  resourceType: 0
+  description: 

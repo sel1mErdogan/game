@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: "\u015Eeker Paketi"
   m_EditorClassIdentifier: 
   itemName: "\u015Eeker Paketi"
-  itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: 730b254065fed9f43a7639ad4530821c, type: 3}
   resourceType: 2
   description: 

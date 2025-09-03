@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: "K\xFCrdan"
   m_EditorClassIdentifier: 
   itemName: "K\xFCrdan"
-  itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: df2b6aac811ad534098c31c2c93fdaec, type: 3}
   resourceType: 3
   description: 

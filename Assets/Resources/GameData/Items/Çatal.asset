@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: "\xC7atal"
   m_EditorClassIdentifier: 
   itemName: "\xC7atal"
-  itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: 14a7b22622f89c249880ecf76ff8c720, type: 3}
   resourceType: 5
   description: 

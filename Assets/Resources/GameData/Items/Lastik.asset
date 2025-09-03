@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Lastik
   m_EditorClassIdentifier: 
   itemName: Lastik
-  itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: 043c3c1602e53d145bae3b6b933b2b4d, type: 3}
   resourceType: 6
   description: 

@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Kibrit
   m_EditorClassIdentifier: 
   itemName: Kibrit
-  itemIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  itemIcon: {fileID: 21300000, guid: a6aba2af60117824da6ffe23adcceeb9, type: 3}
   resourceType: 0
   description: 
