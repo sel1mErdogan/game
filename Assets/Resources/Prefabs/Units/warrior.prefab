@@ -193,7 +193,7 @@ MonoBehaviour:
   attackCooldown: 1.5
   enemyLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 256
   defensiveSearchRadius: 15
   aggressiveSearchRadius: 40
   patrolRadius: 20

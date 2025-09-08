@@ -56,6 +56,26 @@ public class ExplorerBeetleAI : MonoBehaviour
 
     void Update()
     {
+        if (Vector3.Distance(transform.position, Vector3.zero) > 200f)
+        {
+            Debug.LogError($"BÖCEK KAYBOLDU! {gameObject.name} pozisyon: {transform.position}");
+            // Acil durum: Böceği merkeze getir
+            transform.position = Vector3.zero + Vector3.up * 2f;
+        }
+    
+        // Y ekseninde çok aşağı düştüyse uyar
+        if (transform.position.y < -10f)
+        {
+            Debug.LogError($"BÖCEK DÜŞTÜ! {gameObject.name} Y pozisyonu: {transform.position.y}");
+            // Acil durum: Böceği yukarı çıkar
+            transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
+        }
+    
+        // NavMeshAgent durumunu kontrol et
+        if (agent != null && !agent.isOnNavMesh)
+        {
+            Debug.LogWarning($"BÖCEK NAVMESH DIŞINDA! {gameObject.name}");
+        }
         collectionTimer += Time.deltaTime;
 
         if (collectionTimer >= MAX_COLLECTION_TIME && beetle.HasItems())

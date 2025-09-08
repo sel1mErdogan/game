@@ -2568,23 +2568,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2972555200030203416}
   m_CullTransparentMesh: 1
---- !u!114 &1075057674773629754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6901732160592948944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff35a1fa247fbc848871f137913cbbd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allBuildings:
-  - {fileID: 11400000, guid: bb259e29700ff0f448d9b97b719d623f, type: 2}
-  - {fileID: 11400000, guid: 2ec4020477503ad4eb07de6f52069e91, type: 2}
-  - {fileID: 11400000, guid: f2dc100bb2abfb34fbd149593cdd122a, type: 2}
-  - {fileID: 11400000, guid: 7c17016e612837546af29dee42311aab, type: 2}
 --- !u!222 &1088567572380252347
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2789,7 +2772,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8692329349264202281}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
         m_MethodName: SetGraphicsQuality
         m_Mode: 3
@@ -3326,7 +3309,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8692329349264202281}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
         m_MethodName: SetGraphicsQuality
         m_Mode: 3
@@ -4983,7 +4966,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8692329349264202281}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: SettingsManager, Assembly-CSharp
         m_MethodName: SetGraphicsQuality
         m_Mode: 3
@@ -5962,10 +5945,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8692329349264202280}
-  - component: {fileID: 7066333953343449911}
-  - component: {fileID: 7849998035718212466}
-  - component: {fileID: 1075057674773629754}
-  - component: {fileID: 8692329349264202281}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -5992,18 +5971,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7066333953343449911
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6901732160592948944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a989939ca535deb4f9eb43d51645d857, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7080968211399793838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6461,26 +6428,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7248474056560624535}
   m_CullTransparentMesh: 1
---- !u!114 &7849998035718212466
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6901732160592948944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 865311329ff66414d853d010cebb0a4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allItems:
-  - {fileID: 11400000, guid: 299090f14d4cd4f46b5de266ff40fc91, type: 2}
-  - {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
-  - {fileID: 11400000, guid: a8d3c6f73b7cdca4aa68aaa0c5e70123, type: 2}
-  - {fileID: 11400000, guid: 0e032a6fc8f734742bf36657eba16a10, type: 2}
-  - {fileID: 11400000, guid: 00646a4180d88b94c8e18e4f94b88b45, type: 2}
-  - {fileID: 11400000, guid: 1bffb4b6e488fe741bdd53ba6fe1c63c, type: 2}
-  - {fileID: 11400000, guid: da2f1b89e4b3ddd4185ce1f65cfc18f9, type: 2}
 --- !u!224 &7888273121864461323
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7039,19 +6986,6 @@ Transform:
   - {fileID: 1752288192}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8692329349264202281
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6901732160592948944}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 330181b3a24080d4cafc80467d31e2c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainMixer: {fileID: 24100000, guid: c8a56b42853ed4440b9feef193d516cb, type: 2}
 --- !u!224 &8699005602355418833
 RectTransform:
   m_ObjectHideFlags: 0

@@ -3047,7 +3047,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 443302102}
-  - component: {fileID: 443302101}
   m_Layer: 0
   m_Name: InventoryManager
   m_TagString: Untagged
@@ -3055,18 +3054,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &443302101
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 443302100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c1df132e5b3123489c406a3041258c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &443302102
 Transform:
   m_ObjectHideFlags: 0
@@ -10333,12 +10320,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3a0dd4f4c6228c4b82844da6c303738, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dayDurationInSeconds: 50
+  dayDurationInSeconds: 200
   sunLight: {fileID: 705507994}
   OnDayStart:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8419136042710639415}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: SetAllWarriorsToDefensive
         m_Mode: 1
@@ -10377,7 +10364,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 8419136042710639415}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
         m_MethodName: SetAllWarriorsToAggressive
         m_Mode: 1
@@ -11351,7 +11338,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1570626468}
-  - component: {fileID: 1570626469}
   m_Layer: 0
   m_Name: ColonyManager
   m_TagString: Untagged
@@ -11374,34 +11360,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 573682182}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1570626469
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1570626467}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2491caafd0b28ce4db450b628dcd9a3f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AllBeetles: []
-  OnPopulationChanged:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1571809611
 GameObject:
   m_ObjectHideFlags: 0
@@ -16916,23 +16874,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bae13d8ddda6cfe4c92b73ff0f34b2c3, type: 3}
---- !u!114 &1742103155838370618
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5260641971255240400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff35a1fa247fbc848871f137913cbbd4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allBuildings:
-  - {fileID: 11400000, guid: bb259e29700ff0f448d9b97b719d623f, type: 2}
-  - {fileID: 11400000, guid: 2ec4020477503ad4eb07de6f52069e91, type: 2}
-  - {fileID: 11400000, guid: f2dc100bb2abfb34fbd149593cdd122a, type: 2}
-  - {fileID: 11400000, guid: 7c17016e612837546af29dee42311aab, type: 2}
 --- !u!224 &1779583832849503353
 RectTransform:
   m_ObjectHideFlags: 0
@@ -19085,9 +19026,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7955386263681208872}
-  - component: {fileID: 8419136042710639415}
-  - component: {fileID: 8806407859192087410}
-  - component: {fileID: 1742103155838370618}
   m_Layer: 0
   m_Name: GameManager 2
   m_TagString: Untagged
@@ -21627,18 +21565,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8419136042710639415
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5260641971255240400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a989939ca535deb4f9eb43d51645d857, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!222 &8420751465379922975
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -21673,27 +21599,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &8806407859192087410
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5260641971255240400}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 865311329ff66414d853d010cebb0a4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allItems:
-  - {fileID: 11400000, guid: 299090f14d4cd4f46b5de266ff40fc91, type: 2}
-  - {fileID: 11400000, guid: 4ed80ea5cef50e844a081ca8dcdeeb90, type: 2}
-  - {fileID: 11400000, guid: a8d3c6f73b7cdca4aa68aaa0c5e70123, type: 2}
-  - {fileID: 11400000, guid: 0e032a6fc8f734742bf36657eba16a10, type: 2}
-  - {fileID: 11400000, guid: 00646a4180d88b94c8e18e4f94b88b45, type: 2}
-  - {fileID: 11400000, guid: 1bffb4b6e488fe741bdd53ba6fe1c63c, type: 2}
-  - {fileID: 11400000, guid: da2f1b89e4b3ddd4185ce1f65cfc18f9, type: 2}
-  - {fileID: 11400000, guid: 86f6511866362634dae34c72c9243438, type: 2}
 --- !u!222 &8815115208734789589
 CanvasRenderer:
   m_ObjectHideFlags: 0

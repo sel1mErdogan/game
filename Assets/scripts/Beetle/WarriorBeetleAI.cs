@@ -39,6 +39,26 @@ public class WarriorBeetleAI : MonoBehaviour
 
     void Update()
     {
+        if (Vector3.Distance(transform.position, Vector3.zero) > 200f)
+        {
+            Debug.LogError($"BÖCEK KAYBOLDU! {gameObject.name} pozisyon: {transform.position}");
+            // Acil durum: Böceği merkeze getir
+            transform.position = Vector3.zero + Vector3.up * 2f;
+        }
+    
+        // Y ekseninde çok aşağı düştüyse uyar
+        if (transform.position.y < -10f)
+        {
+            Debug.LogError($"BÖCEK DÜŞTÜ! {gameObject.name} Y pozisyonu: {transform.position.y}");
+            // Acil durum: Böceği yukarı çıkar
+            transform.position = new Vector3(transform.position.x, 5f, transform.position.z);
+        }
+    
+        // NavMeshAgent durumunu kontrol et
+        if (agent != null && !agent.isOnNavMesh)
+        {
+            Debug.LogWarning($"BÖCEK NAVMESH DIŞINDA! {gameObject.name}");
+        }
         switch (currentState)
         {
             case State.Patrolling:      HandlePatrollingState();    break;
@@ -105,16 +125,29 @@ public class WarriorBeetleAI : MonoBehaviour
         }
     }
     
-    // GÜNCELLENDİ: Artık bir parametre alıyor.
     private void SearchForEnemy(float searchRadius)
     {
         Collider[] enemies = Physics.OverlapSphere(transform.position, searchRadius, enemyLayer);
+    
+        // DEBUG: Bulunan hedefleri logla
+        foreach(var enemy in enemies)
+        {
+            Debug.LogWarning($"SAVAŞÇI HEDEF BULDU: {enemy.name} - Layer: {enemy.gameObject.layer}");
+        
+            // Eğer hedef bir böcekse UYAR!
+            if(enemy.GetComponent<Beetle>() != null)
+            {
+                Debug.LogError($"HATA! Savaşçı kendi böceğine saldırıyor: {enemy.name}");
+            }
+        }
+    
         if (enemies.Length > 0)
         {
             targetEnemy = enemies[0].transform;
             ChangeState(State.MovingToEnemy);
         }
     }
+
 
     private void Attack()
     {

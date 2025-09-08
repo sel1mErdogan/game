@@ -39,7 +39,7 @@ public class ConstructionSite : MonoBehaviour
             }
         }
     }
-    
+
     // Bir MasterBeetle gelip inşaata başladığında bu çağrılır
     public void StartConstructing(MasterBeetleAI builder)
     {

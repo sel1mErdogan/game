@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 695475550995044555}
   - component: {fileID: 3087226256321210442}
   - component: {fileID: 7082944798790738246}
+  - component: {fileID: -5409457505839308814}
   m_Layer: 0
   m_Name: "K\xFCrdanKulesi_Prefab "
   m_TagString: Building
@@ -105,3 +106,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-5409457505839308814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4481227423901957542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54feca8e95872134287ff4b2a5aad755, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxCan: 100
+  isColonyUnit: 0
+  populationCost: 1
+  healthBarPrefab: {fileID: 0}
+  healthBarOffset: {x: 0, y: 2, z: 0}

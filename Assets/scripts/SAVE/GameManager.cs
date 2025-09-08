@@ -143,14 +143,21 @@ public class GameManager : MonoBehaviour
         } 
         
         gameData.builtBuildings.Clear(); 
-        foreach (var buildingObj in GameObject.FindGameObjectsWithTag("Building")) 
+        GameObject[] allBuildings = GameObject.FindGameObjectsWithTag("Building");
+        Debug.Log($"SAVE: {allBuildings.Length} adet tamamlanmış yapı bulundu!");
+
+        foreach (var buildingObj in allBuildings) 
         { 
+            string cleanName = buildingObj.name.Replace("(Clone)","").Trim();
+            Debug.Log($"SAVE: '{cleanName}' yapısı kaydediliyor...");
+    
             gameData.builtBuildings.Add(new SerializableBuildingData { 
-                buildingName = buildingObj.name.Replace("(Clone)","").Trim(), 
+                buildingName = cleanName, 
                 position = buildingObj.transform.position, 
                 rotation = buildingObj.transform.rotation 
             }); 
-        } 
+        }
+
         
         // --- İNŞAAT ALANLARI İÇİN DÜZELTİLMİŞ KISIM ---
         gameData.constructionSites.Clear(); 
@@ -218,14 +225,24 @@ public class GameManager : MonoBehaviour
                 } 
             } 
             
+            Debug.Log($"LOAD: {gameData.builtBuildings.Count} adet yapı yüklenecek!");
+
             foreach (var buildingData in gameData.builtBuildings) 
             { 
+                Debug.Log($"LOAD: '{buildingData.buildingName}' yapısı aranıyor...");
+    
                 BuildingData d = BuildingDatabase.Instance.FindBuildingByName(buildingData.buildingName); 
                 if (d != null && d.finishedBuildingPrefab != null) 
                 {
+                    Debug.Log($"LOAD: '{buildingData.buildingName}' yapısı başarıyla yüklendi!");
                     Instantiate(d.finishedBuildingPrefab, buildingData.position, buildingData.rotation); 
                 }
+                else
+                {
+                    Debug.LogError($"LOAD HATASI: '{buildingData.buildingName}' yapısı BuildingDatabase'de bulunamadı!");
+                }
             } 
+
             
             // --- İNŞAAT ALANLARI İÇİN DÜZELTİLMİŞ KISIM ---
             foreach(var siteData in gameData.constructionSites) 
