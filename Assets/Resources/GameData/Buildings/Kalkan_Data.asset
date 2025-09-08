@@ -12,13 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 775089dd4862e9d48a5f870873050f05, type: 3}
   m_Name: Kalkan_Data
   m_EditorClassIdentifier: 
-  buildingName: 
-  description: 
-  buildingIcon: {fileID: 0}
-  requiredMaterials: []
-  buildTime: 10
+  buildingName: 'Kalkan '
+  description: "Yak\u0131n\u0131ndaki di\u011Fer binalara veya b\xF6ceklere ge\xE7ici
+    bir savunma bonusu sa\u011Flayan destek binas\u0131."
+  buildingIcon: {fileID: 21300000, guid: 25c26052150cd924b8c332fe4da87888, type: 3}
+  requiredMaterials:
+  - resource: {fileID: 11400000, guid: da2f1b89e4b3ddd4185ce1f65cfc18f9, type: 2}
+    amount: 1
+  - resource: {fileID: 11400000, guid: a8d3c6f73b7cdca4aa68aaa0c5e70123, type: 2}
+    amount: 2
+  buildTime: 15
   placementGhostPrefab: {fileID: 0}
   constructionSitePrefab: {fileID: 0}
   finishedBuildingPrefab: {fileID: 0}
-  hasDurability: 0
+  hasDurability: 1
   needsAmmo: 0

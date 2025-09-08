@@ -1,7 +1,6 @@
-// --- ItemDatabase.cs ---
 using UnityEngine;
 using System.Collections.Generic;
-using InventorySystem; // ItemData sınıfına erişim için
+using InventorySystem; // ItemData'yı tanımak için
 
 public class ItemDatabase : MonoBehaviour
 {
@@ -12,20 +11,16 @@ public class ItemDatabase : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
+        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        Instance = this;
     }
 
-    // Verilen isme göre ItemData'yı listeden bulup döndürür.
+    /// <summary>
+    /// Verilen isme göre ItemData'yı listeden bulup döndürür. Bu bizim telefon rehberi fonksiyonumuz.
+    /// </summary>
     public ItemData FindItemByName(string name)
     {
+        if (string.IsNullOrEmpty(name)) return null;
         return allItems.Find(item => item.itemName == name);
     }
 }

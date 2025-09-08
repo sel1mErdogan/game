@@ -78,13 +78,15 @@ public class BuildingManager : MonoBehaviour
         }
     }
 
+    // BuildingManager.cs içindeki PlaceBuilding fonksiyonunun son hali
     private void PlaceBuilding()
     {
         GameObject constructionSiteObj = Instantiate(selectedBuilding.constructionSitePrefab, placementGhost.transform.position, placementGhost.transform.rotation);
         ConstructionSite siteScript = constructionSiteObj.GetComponent<ConstructionSite>();
         if (siteScript != null)
         {
-            siteScript.Initialize(selectedBuilding);
+            // Initialize fonksiyonuna tam BuildingData'yı gönderiyoruz
+            siteScript.Initialize(selectedBuilding); 
         }
         
         AssignTaskToMasterBeetle(constructionSiteObj.transform);

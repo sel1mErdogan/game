@@ -1,53 +1,59 @@
-// --- ConstructionSite.cs (Güncellenmiş Hali) ---
 using UnityEngine;
 
 public class ConstructionSite : MonoBehaviour
 {
-    private BuildingData buildingToBuild;
+    // DEĞİŞİKLİK: Artık BuildingData'nın tamamını değil, sadece adını tutacağız.
+    private string buildingName; 
+    private float buildTime;
+
     private float currentBuildTime = 0f;
-    private bool isBuilderPresent = false;
     private MasterBeetleAI assignedBuilder;
 
-    // YENİ EKLENDİ: GameManager'ın bu bilgileri okuyabilmesi için
-    public BuildingData GetBuildingData() { return buildingToBuild; }
+    // GameManager'ın bu bilgileri dışarıdan okuyabilmesi için
+    public string GetBuildingName() { return buildingName; }
     public float GetCurrentBuildTime() { return currentBuildTime; }
 
+    // Bir inşaat alanı oluşturulduğunda bu fonksiyon çağrılır
     public void Initialize(BuildingData data)
     {
-        buildingToBuild = data;
+        buildingName = data.buildingName;
+        buildTime = data.buildTime;
     }
 
-    // YENİ EKLENDİ: Kayıttan yüklenen ilerlemeyi ayarlamak için
-    public void LoadProgress(BuildingData data, float time)
+    // Oyunu yüklerken bu fonksiyon çağrılır
+    public void LoadProgress(string name, float time, float maxTime)
     {
-        buildingToBuild = data;
+        buildingName = name;
         currentBuildTime = time;
+        buildTime = maxTime;
     }
 
     private void Update()
     {
-        if (isBuilderPresent)
+        if (assignedBuilder != null)
         {
             currentBuildTime += Time.deltaTime;
-            if (currentBuildTime >= buildingToBuild.buildTime)
+            if (currentBuildTime >= buildTime)
             {
                 CompleteConstruction();
             }
         }
     }
     
-    // Diğer fonksiyonlar (StartConstructing, CompleteConstruction) aynı kalacak...
+    // Bir MasterBeetle gelip inşaata başladığında bu çağrılır
     public void StartConstructing(MasterBeetleAI builder)
     {
         assignedBuilder = builder;
-        isBuilderPresent = true;
     }
 
+    // İnşaat tamamlandığında
     private void CompleteConstruction()
     {
-        if (buildingToBuild.finishedBuildingPrefab != null)
+        // Binanın tam verisini veritabanından adıyla bul
+        BuildingData data = BuildingDatabase.Instance.FindBuildingByName(buildingName);
+        if (data != null && data.finishedBuildingPrefab != null)
         {
-            Instantiate(buildingToBuild.finishedBuildingPrefab, transform.position, transform.rotation);
+            Instantiate(data.finishedBuildingPrefab, transform.position, transform.rotation);
         }
         
         if (assignedBuilder != null)

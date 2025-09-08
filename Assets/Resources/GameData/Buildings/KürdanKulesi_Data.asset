@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: "K\xFCrdanKulesi_Data"
   m_EditorClassIdentifier: 
   buildingName: "K\xFCrdan Kulesi"
-  description: 
-  buildingIcon: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  description: "Tekli hedeflere h\u0131zl\u0131 ama d\xFC\u015F\xFCk hasar veren
+    temel savunma kulesi.\n\n"
+  buildingIcon: {fileID: 21300000, guid: 6b21fceeb45dd4c44b93577ed22a516d, type: 3}
   requiredMaterials:
   - resource: {fileID: 11400000, guid: a8d3c6f73b7cdca4aa68aaa0c5e70123, type: 2}
-    amount: 3
+    amount: 5
   - resource: {fileID: 11400000, guid: da2f1b89e4b3ddd4185ce1f65cfc18f9, type: 2}
     amount: 1
   buildTime: 10

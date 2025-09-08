@@ -12,13 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 775089dd4862e9d48a5f870873050f05, type: 3}
   m_Name: KibritFirlatici_Data
   m_EditorClassIdentifier: 
-  buildingName: 
-  description: 
-  buildingIcon: {fileID: 0}
-  requiredMaterials: []
-  buildTime: 10
+  buildingName: "Kibrit F\u0131rlat\u0131c\u0131"
+  description: "Tek bir noktaya patlay\u0131c\u0131, alan hasar\u0131 (AoE) veren
+    g\xFC\xE7l\xFC ama yava\u015F bir kule."
+  buildingIcon: {fileID: 21300000, guid: b50aa728afdda9f4d92bdc3ffd33aa4e, type: 3}
+  requiredMaterials:
+  - resource: {fileID: 11400000, guid: 00646a4180d88b94c8e18e4f94b88b45, type: 2}
+    amount: 1
+  - resource: {fileID: 11400000, guid: 0e032a6fc8f734742bf36657eba16a10, type: 2}
+    amount: 1
+  buildTime: 15
   placementGhostPrefab: {fileID: 0}
   constructionSitePrefab: {fileID: 0}
   finishedBuildingPrefab: {fileID: 0}
-  hasDurability: 0
-  needsAmmo: 0
+  hasDurability: 1
+  needsAmmo: 1

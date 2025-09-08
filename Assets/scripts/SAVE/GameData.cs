@@ -1,30 +1,65 @@
-// --- GameData.cs (Yazım Hatası Düzeltilmiş Nihai Versiyon) ---
 using System.Collections.Generic;
 using UnityEngine;
 
+// --- KAYIT SİSTEMİ İÇİN GEREKLİ YARDIMCI VERİ SINIFLARI ---
+// Bu sınıfların hepsi [System.Serializable] olmalı ve karmaşık referanslar içermemeli.
+
+[System.Serializable]
+public class SerializableItemEntry
+{
+    public string itemName;
+    public int amount;
+}
+
+[System.Serializable]
+public class SerializableUnitData
+{
+    public string unitName;
+    public Vector3 position;
+    public Quaternion rotation;
+    public int currentHealth;
+}
+
+[System.Serializable]
+public class SerializableBuildingData
+{
+    public string buildingName;
+    public Vector3 position;
+    public Quaternion rotation;
+}
+
+[System.Serializable] 
+public class SerializableConstructionSiteData 
+{ 
+    public string buildingName; // Hangi binanın inşa edildiğinin adı
+    public Vector3 position; 
+    public Quaternion rotation; 
+    public float currentBuildTime; // İnşaatın ne kadar ilerlediği
+}
+
+[System.Serializable]
+public class SerializablePlayerData
+{
+    public Vector3 position;
+    public Quaternion rotation;
+}
+
+
+// --- ANA OYUN VERİ SINIFI ---
 [System.Serializable]
 public class GameData
 {
     public string saveName;
     public string lastSaved;
-
-    // Genel Durum
     public int currentDay;
     public float timeOfDay;
-    // Envanter
     public List<SerializableItemEntry> colonyStockpile;
-    // Nüfus
     public int currentPopulation;
     public int maxPopulation;
-    // Dünya Durumu
     public List<string> collectedWorldItemIDs;
-    // Sahnedeki Birimler (Böcekler)
     public List<SerializableUnitData> activeUnits;
-    // İnşa Edilmiş Binalar
     public List<SerializableBuildingData> builtBuildings;
-    // İnşaat Halindeki Alanlar
     public List<SerializableConstructionSiteData> constructionSites;
-    // Oyuncu Verisi
     public SerializablePlayerData playerData;
 
     public GameData()
@@ -34,7 +69,7 @@ public class GameData
         this.currentDay = 1;
         this.timeOfDay = 0.25f;
         this.colonyStockpile = new List<SerializableItemEntry>();
-        this.currentPopulation = 5;
+        this.currentPopulation = 0; // Başlangıç nüfusu 0 olmalı, sahnedekiler sayılır.
         this.maxPopulation = 10;
         this.collectedWorldItemIDs = new List<string>();
         this.activeUnits = new List<SerializableUnitData>();
@@ -43,21 +78,3 @@ public class GameData
         this.playerData = null; 
     }
 }
-
-// --- Kayıt Sistemi İçin Gerekli Yardımcı Veri Sınıfları ---
-
-[System.Serializable] public class SerializableItemEntry { public string itemName; public int amount; }
-[System.Serializable] public class SerializableUnitData { public string unitName; public Vector3 position; public Quaternion rotation; public int currentHealth; }
-[System.Serializable] public class SerializableBuildingData { public string buildingName; public Vector3 position; public Quaternion rotation; }
-
-// DÜZELTİLMİŞ SINIF BURADA
-[System.Serializable] 
-public class SerializableConstructionSiteData 
-{ 
-    public string buildingName; // Sadece bir tane olacak
-    public Vector3 position; 
-    public Quaternion rotation; 
-    public float currentBuildTime; 
-}
-
-[System.Serializable] public class SerializablePlayerData { public Vector3 position; public Quaternion rotation; }
