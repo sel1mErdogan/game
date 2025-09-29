@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 3461072221845980511}
   - component: {fileID: 5462183939348182273}
   - component: {fileID: 3125034649439146685}
-  - component: {fileID: 8785288633249801846}
   - component: {fileID: 8319789794607087125}
+  - component: {fileID: 7640785578649502474}
   m_Layer: 6
   m_Name: lastik
   m_TagString: Untagged
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4946434041952518880}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -5287425419667122880, guid: 8bcc16383d3f66a4080bc36ff9f0e92c, type: 3}
 --- !u!23 &3125034649439146685
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: -6629797300637803691, guid: 8bcc16383d3f66a4080bc36ff9f0e92c, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,8 +85,23 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8785288633249801846
-BoxCollider:
+--- !u!114 &8319789794607087125
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4946434041952518880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14c449c4feeb9bc4aa1ad60e0d07036b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemData: {fileID: 11400000, guid: 0e032a6fc8f734742bf36657eba16a10, type: 2}
+  quantity: 15
+  id: 
+--- !u!136 &7640785578649502474
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -103,21 +118,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8319789794607087125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4946434041952518880}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14c449c4feeb9bc4aa1ad60e0d07036b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemData: {fileID: 11400000, guid: 0e032a6fc8f734742bf36657eba16a10, type: 2}
-  quantity: 15
-  id: 
+  serializedVersion: 2
+  m_Radius: 0.7117231
+  m_Height: 0.19999997
+  m_Direction: 1
+  m_Center: {x: 0.022685051, y: 0, z: -0.10707262}

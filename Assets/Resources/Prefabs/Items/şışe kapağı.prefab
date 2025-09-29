@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 6261566810931828098}
   - component: {fileID: 3494690057470993701}
   - component: {fileID: 2760701037422559190}
-  - component: {fileID: -1901804558811023870}
+  - component: {fileID: -4410516092734105328}
   m_Layer: 0
   m_Name: "\u015F\u0131\u015Fe kapa\u011F\u0131"
   m_TagString: Untagged
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4434887035414550672}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: -7387706064836869012, guid: 3ce8e28ccdf222e488d31ef9d973e045, type: 3}
 --- !u!23 &3494690057470993701
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 4874126678125670354, guid: 3ce8e28ccdf222e488d31ef9d973e045, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -100,8 +100,8 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: da2f1b89e4b3ddd4185ce1f65cfc18f9, type: 2}
   quantity: 1
   id: 
---- !u!65 &-1901804558811023870
-BoxCollider:
+--- !u!136 &-4410516092734105328
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -118,6 +118,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  serializedVersion: 2
+  m_Radius: 1.2399145
+  m_Height: 0.32
+  m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
