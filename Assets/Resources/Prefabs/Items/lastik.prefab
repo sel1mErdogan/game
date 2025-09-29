@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3125034649439146685}
   - component: {fileID: 8319789794607087125}
   - component: {fileID: 7640785578649502474}
+  - component: {fileID: -7915058759615208382}
   m_Layer: 6
   m_Name: lastik
   m_TagString: Untagged
@@ -123,3 +124,16 @@ CapsuleCollider:
   m_Height: 0.19999997
   m_Direction: 1
   m_Center: {x: 0.022685051, y: 0, z: -0.10707262}
+--- !u!114 &-7915058759615208382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4946434041952518880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2bab0a1ebd5284409cfe889a0eaac54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  donusHizi: 30

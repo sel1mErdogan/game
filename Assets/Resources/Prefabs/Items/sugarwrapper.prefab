@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3964705474775588119}
   - component: {fileID: 8868190753765952276}
   - component: {fileID: 2464229681740280226}
+  - component: {fileID: 243640885240442255}
   m_Layer: 0
   m_Name: sugarwrapper
   m_TagString: Untagged
@@ -122,3 +123,16 @@ MonoBehaviour:
   itemData: {fileID: 11400000, guid: 1bffb4b6e488fe741bdd53ba6fe1c63c, type: 2}
   quantity: 1
   id: 
+--- !u!114 &243640885240442255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362552078034491972}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2bab0a1ebd5284409cfe889a0eaac54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  donusHizi: 30
