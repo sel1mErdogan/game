@@ -24,6 +24,6 @@ MonoBehaviour:
   buildTime: 10
   placementGhostPrefab: {fileID: 2287180932221785444, guid: 5a9661d23ac9e3a4baa4c4e683b76a06, type: 3}
   constructionSitePrefab: {fileID: 2111466012640439365, guid: fd74fc1d5a20b474fba4757a0de7e383, type: 3}
-  finishedBuildingPrefab: {fileID: 4481227423901957542, guid: bd808eacbfee4a24e821d03650c95424, type: 3}
+  finishedBuildingPrefab: {fileID: 8604006798929133183, guid: f649ac3cc444340478fabf4d91681ff3, type: 3}
   hasDurability: 1
   needsAmmo: 0

@@ -68,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: -2813467912831258332, guid: 29c49710e8861d940a7d82f6bbf0817f, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c19e74b1e86e19c4cb531588a7349399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  beetleType: 3
+  beetleType: 0
   collectRadius: 2
   maxInventorySize: 5
   individualUpgrades: []
@@ -194,9 +194,8 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 256
-  defensiveSearchRadius: 15
+  defensivePatrolRadius: 15
   aggressiveSearchRadius: 40
-  patrolRadius: 20
 --- !u!114 &-399380820929132595
 MonoBehaviour:
   m_ObjectHideFlags: 0

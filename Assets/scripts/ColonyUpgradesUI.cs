@@ -52,10 +52,7 @@ public class ColonyUpgradesUI : MonoBehaviour
         }
     }
 
-    public void ClosePanel()
-    {
-        gameObject.SetActive(false);
-    }
+   
     
     // --- BİTTİ ---
 
@@ -64,6 +61,10 @@ public class ColonyUpgradesUI : MonoBehaviour
         gameObject.SetActive(true);
         allBeetles = FindObjectsOfType<Beetle>().ToList();
         FilterAndDisplayBugs(BeetleType.Worker);
+    }
+    public void ClosePanel()
+    {
+        gameObject.SetActive(false);
     }
 
     // ColonyUpgradesUI.cs script'inin içindeki fonksiyon

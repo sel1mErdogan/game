@@ -25,7 +25,91 @@ public class GameManager : MonoBehaviour
     private void OnDestroy() 
     { 
         SceneManager.sceneLoaded -= OnSceneLoaded; 
+        
+        // --- HAFIZA SIZINTISINI ÖNLEMEK İÇİN ÖNEMLİ ---
+        // Sahne değiştiğinde veya oyun kapandığında, event aboneliklerini kaldır.
+        if (dayNightCycle != null)
+        {
+            dayNightCycle.OnDayStart.RemoveListener(HandleDayStart);
+            dayNightCycle.OnNightStart.RemoveListener(HandleNightStart);
+        }
+        // ---------------------------------------------
     }
+
+    // --- YENİ EKLENEN GECE/GÜNDÜZ KOMUTA FONKSİYONLARI ---
+
+    /// <summary>
+    /// Gece başladığında çağrılır ve tüm ilgili sistemlere emir verir.
+    /// </summary>
+    public void HandleNightStart()
+    {
+        Debug.LogWarning("GECE BAŞLADI! Böcekler davranış değiştiriyor...");
+
+        // 1. Savaşçıları Saldırı Moduna al
+        foreach (var warrior in FindObjectsOfType<WarriorBeetleAI>())
+        {
+            warrior.SetAggressionMode(true); // Saldırgan ol!
+        }
+
+        // 2. Diğer tüm böcekleri üsse geri çağır (Bu fonksiyonları böceklerin script'lerine eklemen gerekiyor)
+        // foreach (var worker in FindObjectsOfType<WorkerBeetleAI>())
+        // {
+        //     worker.EnterNightMode(); // Gece moduna geç
+        // }
+        // foreach (var explorer in FindObjectsOfType<ExplorerBeetleAI>())
+        // {
+        //     explorer.EnterNightMode(); // Gece moduna geç
+        // }
+        // foreach (var master in FindObjectsOfType<MasterBeetleAI>())
+        // {
+        //     master.EnterNightMode(); // Gece moduna geç
+        // }
+        
+        // 3. Düşmanları spawn et
+        EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
+        if(spawner != null)
+        {
+            spawner.SpawnWave();
+        }
+    }
+
+    /// <summary>
+    /// Gündüz başladığında çağrılır ve tüm ilgili sistemlere emir verir.
+    /// </summary>
+    public void HandleDayStart()
+    {
+        Debug.LogWarning("GÜNDÜZ OLDU! Böcekler normale dönüyor...");
+
+        // 1. Savaşçıları Savunma Moduna al ve üsse geri çağır
+        foreach (var warrior in FindObjectsOfType<WarriorBeetleAI>())
+        {
+            warrior.SetAggressionMode(false); // Savunmaya geç!
+        }
+
+        // 2. Diğer tüm böcekleri tekrar işe gönder (Bu fonksiyonları böceklerin script'lerine eklemen gerekiyor)
+        // foreach (var worker in FindObjectsOfType<WorkerBeetleAI>())
+        // {
+        //     worker.EnterDayMode(); // Gündüz moduna geç
+        // }
+        // foreach (var explorer in FindObjectsOfType<ExplorerBeetleAI>())
+        // {
+        //     explorer.EnterDayMode(); // Gündüz moduna geç
+        // }
+        // foreach (var master in FindObjectsOfType<MasterBeetleAI>())
+        // {
+        //     master.EnterDayMode(); // Gündüz moduna geç
+        // }
+
+        // 3. Hayatta kalan düşmanları temizle
+        EnemySpawner spawner = FindObjectOfType<EnemySpawner>();
+        if(spawner != null)
+        {
+            spawner.CleanupEnemies();
+        }
+    }
+    
+    // --- BİTTİ ---
+
     
     public void StartNewGame(int slotIndex) 
     { 
@@ -158,19 +242,16 @@ public class GameManager : MonoBehaviour
             }); 
         }
 
-        
-        // --- İNŞAAT ALANLARI İÇİN DÜZELTİLMİŞ KISIM ---
         gameData.constructionSites.Clear(); 
         foreach(var site in FindObjectsOfType<ConstructionSite>()) 
         { 
             gameData.constructionSites.Add(new SerializableConstructionSiteData { 
-                buildingName = site.GetBuildingName(), // Sadece ismini alıyoruz
+                buildingName = site.GetBuildingName(),
                 position = site.transform.position, 
                 rotation = site.transform.rotation, 
                 currentBuildTime = site.GetCurrentBuildTime() 
             }); 
         } 
-        
         
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player"); 
         if (playerObj != null) { gameData.playerData = new SerializablePlayerData { position = playerObj.transform.position, rotation = playerObj.transform.rotation }; }
@@ -181,26 +262,35 @@ public class GameManager : MonoBehaviour
         if (scene.name == "OyunSahnesi") 
         { 
             dayNightCycle = FindObjectOfType<D>(); 
+            
+            // --- GÜN/GECE OLAYLARINA ABONE OLMA ---
+            if (dayNightCycle != null)
+            {
+                // Önceki abonelikleri temizle (sahne yeniden yüklendiğinde çift dinlemeyi önler)
+                dayNightCycle.OnDayStart.RemoveAllListeners();
+                dayNightCycle.OnNightStart.RemoveAllListeners();
+
+                // Yeni fonksiyonları bağla
+                dayNightCycle.OnDayStart.AddListener(HandleDayStart);
+                dayNightCycle.OnNightStart.AddListener(HandleNightStart);
+                Debug.Log("GameManager, gün/gece döngüsü olaylarına başarıyla abone oldu.");
+            }
+            // ------------------------------------
+
             if (this.gameData == null) { StartNewGame(0); return; } 
             
             CleanupSceneForLoad(); 
             
             if (dayNightCycle != null) { dayNightCycle.CurrentDay = gameData.currentDay; dayNightCycle.LoadTimeOfDay(gameData.timeOfDay); } 
             
-            // --- ENVANTER YÜKLEME KISMI DÜZELTİLDİ ---
             if (InventoryManager.Instance != null && ItemDatabase.Instance != null)
             {
-                // Boş bir Dictionary oluştur
                 Dictionary<ItemData, int> stockpileToLoad = new Dictionary<ItemData, int>();
-                
-                // Kayıt dosyasındaki her bir "isim, miktar" çifti için...
                 foreach (var savedEntry in gameData.colonyStockpile)
                 {
-                    // Telefon Rehberi'ni (ItemDatabase) kullanarak isme karşılık gelen asıl ItemData'yı bul
                     ItemData itemData = ItemDatabase.Instance.FindItemByName(savedEntry.itemName);
                     if (itemData != null)
                     {
-                        // Eğer bulunduysa, yeni Dictionary'ye ekle
                         stockpileToLoad.Add(itemData, savedEntry.amount);
                     }
                     else
@@ -208,8 +298,6 @@ public class GameManager : MonoBehaviour
                         Debug.LogWarning($"Yükleme hatası: '{savedEntry.itemName}' isminde bir eşya ItemDatabase'de bulunamadı!");
                     }
                 }
-                // Oluşturduğumuz bu tam ve doğru Dictionary'yi envanter yöneticisine yüklet
-                // Not: InventoryManager'da LoadStockpile(Dictionary<ItemData, int> ...) fonksiyonu olmalı
                 InventoryManager.Instance.LoadStockpile(stockpileToLoad);
             }
 
@@ -226,15 +314,11 @@ public class GameManager : MonoBehaviour
             } 
             
             Debug.Log($"LOAD: {gameData.builtBuildings.Count} adet yapı yüklenecek!");
-
             foreach (var buildingData in gameData.builtBuildings) 
             { 
-                Debug.Log($"LOAD: '{buildingData.buildingName}' yapısı aranıyor...");
-    
                 BuildingData d = BuildingDatabase.Instance.FindBuildingByName(buildingData.buildingName); 
                 if (d != null && d.finishedBuildingPrefab != null) 
                 {
-                    Debug.Log($"LOAD: '{buildingData.buildingName}' yapısı başarıyla yüklendi!");
                     Instantiate(d.finishedBuildingPrefab, buildingData.position, buildingData.rotation); 
                 }
                 else
@@ -243,15 +327,12 @@ public class GameManager : MonoBehaviour
                 }
             } 
 
-            
-            // --- İNŞAAT ALANLARI İÇİN DÜZELTİLMİŞ KISIM ---
             foreach(var siteData in gameData.constructionSites) 
             { 
                 BuildingData d = BuildingDatabase.Instance.FindBuildingByName(siteData.buildingName); 
                 if(d != null && d.constructionSitePrefab != null) 
                 { 
                     GameObject s = Instantiate(d.constructionSitePrefab, siteData.position, siteData.rotation); 
-                    // İnşaat alanına ismini, ilerlemesini ve maksimum süresini veriyoruz
                     s.GetComponent<ConstructionSite>()?.LoadProgress(d.buildingName, siteData.currentBuildTime, d.buildTime); 
                 } 
             } 

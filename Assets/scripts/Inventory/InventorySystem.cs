@@ -10,5 +10,6 @@ namespace InventorySystem
         BottleCap,      // Şişe Kapağı
         Fork,           // Çatal
         Rubber          // Lastik
+        
     }
 }
